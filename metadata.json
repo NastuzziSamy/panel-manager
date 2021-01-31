@@ -1,0 +1,8 @@
+{
+  "name": "Bar Manager",
+  "description": "Allow the user to customize how he wants the gnome bar...",
+  "uuid": "bar-manager@nastuzzisamy.github.com",
+  "shell-version": [
+    "3.38"
+  ]
+}
