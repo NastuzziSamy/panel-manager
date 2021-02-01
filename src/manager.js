@@ -4,7 +4,7 @@ const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const helper = Me.imports.src.helper;
-const { IndicatorCompatibility } = Me.imports.src.indicatorCompatibility;
+const { IndicatorCompatibility, MenuIndicator } = Me.imports.src.indicators;
 
 const LAYOUT_COMPATIBILITY = 'no-name-';
 let indicatorNumber = 0;
@@ -26,12 +26,18 @@ const PANEL_PREFS = {
         'de.ttll.GnomeScreenshot',
         'lockkeys',
         'a11y',
-        'keyboard',
         'clipboardIndicator',
         'printers',
         'openweatherMenu',
         'dateMenu',
         'DoNotDisturbRole',
+    ],
+    menu: [
+        {
+            type: 'indicator',
+            indicator: 'keyboard',
+            position: 7,
+        }
     ],
 };
 
@@ -66,7 +72,9 @@ var BarManager = class {
         this.resolveDefaultPanel();
         this.applyPrefs();
 
-        global.a = this;
+        this.getIndicator('aggregateMenu').menu.addMenuItem(
+            (new MenuIndicator(this.getIndicator('keyboard'))).menu, 5
+        );
     }
 
     destroy() {

@@ -3,7 +3,7 @@ const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const { LAYOUT_COMPATIBILITY, IndicatorCompatibility } = Me.imports.src.indicatorCompatibility;
+const { LAYOUT_COMPATIBILITY, IndicatorCompatibility } = Me.imports.src.indicators;
 
 
 const findIndicator = (child) => {
