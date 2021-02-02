@@ -20,43 +20,74 @@ var IndicatorCompatibility = GObject.registerClass(
         _init(indicator) {
             super._init();
 
-            this.indicator = indicator;
+            this.proxied = indicator;
             this.add_child(indicator);
         }
     }
 );
+global.d = []
 
-
-var SystemIndicator = GObject.registerClass(
+var MenuIndicator = GObject.registerClass(
 class MenuIndicator extends PanelMenu.SystemIndicator {
-    _init(indicator) {
+    _init(indicator, text, icon) {
         super._init();
-        global.a = this;
-        this.indicator = indicator;
-        this.subMenu = new PopupMenu.PopupSubMenuMenuItem('Langue', true);
-        this.subMenu.icon.icon_name = 'format-text-bold';
 
-        const children = this.indicator.get_children();
-        this.indicator.remove_all_children();
-        for (const key in children) {
-            this.subMenu.insert_child_below(children[key], this.subMenu._triangleBin);
+        this.proxied = indicator;
+        this.subMenu = new PopupMenu.PopupSubMenuMenuItem(text, true);
+        
+        if (icon) {
+            this.subMenu.icon.icon_name = icon;
         }
 
+        this.insertPanelLayout();
         this.proxyMenu();
         this.cloneMenuBox();
 
         this.menu.addMenuItem(this.subMenu);
     }
 
-    destroy() {
+    insertPanelLayout() {
+        const children = this.proxied.get_children();
+        this.proxied.remove_all_children();
 
+        if (children.length === 1 && children[0] instanceof St.BoxLayout) {
+            const subChildren = children[0].get_children().filter(child => child.style_class !== 'popup-menu-arrow');
+
+            if (subChildren[0] instanceof St.Icon) {
+                if (!this.subMenu.icon.icon_name) {
+                    this.subMenu.icon.icon_name = subChildren[0].icon_name;
+
+                    subChildren[0].bind_property('icon_name', this.subMenu.icon, 'icon_name', 0);
+                }
+
+                if (subChildren.length === 1) {
+                    return;
+                }
+
+                subChildren[0].visible = false;
+            }
+        }
+
+        for (const key in children) {
+            const child = children[key];
+            
+            if (child instanceof St.BoxLayout) {
+                const arrowChild = child.get_last_child();
+
+                if (arrowChild.style_class === 'popup-menu-arrow') {
+                    arrowChild.visible = false;
+                }
+            }
+
+            this.subMenu.insert_child_below(child, this.subMenu._triangleBin);
+        }
     }
 
     cloneMenuBox() {        
         this.subMenu.menu.box.remove_all_children();
 
-        const items = this.indicator.menu.box.get_children();
-        this.indicator.menu.box.remove_all_children();
+        const items = this.proxied.menu.box.get_children();
+        this.proxied.menu.box.remove_all_children();
 
         for (const key in items) {
             const item = items[key];
@@ -66,23 +97,26 @@ class MenuIndicator extends PanelMenu.SystemIndicator {
     }
 
     proxyMenu() {
-        this.indicator.menu.box.add = (item, position) => {
+        this.proxied.menu.box.add = (item, position) => {
             this.subMenu.menu.box.add_child(item, position);
         };
 
-        this.indicator.menu.box.insert_child_below = (item, before) => {
+        this.proxied.menu.box.insert_child_below = (item, before) => {
             this.subMenu.menu.box.insert_child_below(item, before);
-        }
+        };
 
-        this.indicator.menu.addMenuItem = (item, position) => {
+        this.proxied.menu.box.remove_all_children = () => {
+            this.subMenu.menu.box.remove_all_children();
+        };
+
+        this.proxied.menu.addMenuItem = (item, position) => {
             this.subMenu.menu.addMenuItem(item, position);
-        }
+        };
 
-        // box.add_child = (item) => log('add_child');
-        // box.remove = (item) => log('remove');
-        // box.remove_child = (item) => log('remove_child');
-        // box.remove_all_children = (item) => log('remove_all_children');
-        // box.destroy = (item) => log('destroy');
-        // box.destroy_all_children = (item) => log('destroy_all_children');
+        // this.proxied.menu.box.add_child = (item, position) => log('add_child');
+        // this.proxied.menu.box.remove = (item) => log('remove');
+        // this.proxied.menu.box.remove_child = (item) => log('remove_child');
+        // this.proxied.menu.box.destroy = (item) => log('destroy');
+        // this.proxied.menu.box.destroy_all_children = (item) => log('destroy_all_children');
     }
 });

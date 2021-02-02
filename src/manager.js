@@ -22,22 +22,39 @@ const PANEL_PREFS = {
         'no-name-0',
     ],
     right: [
-        'drive-menu',
-        'de.ttll.GnomeScreenshot',
         'lockkeys',
         'a11y',
         'clipboardIndicator',
-        'printers',
+        'de.ttll.GnomeScreenshot',
         'openweatherMenu',
         'dateMenu',
-        'DoNotDisturbRole',
     ],
     menu: [
         {
             type: 'indicator',
             indicator: 'keyboard',
-            position: 7,
-        }
+            text: 'Langue',
+            icon: 'format-text-bold',
+            position: 11,
+        },
+        {
+            type: 'indicator',
+            indicator: 'drive-menu',
+            text: 'Disques connectés',
+            position: 12,
+        },
+        {
+            type: 'indicator',
+            indicator: 'printers',
+            text: 'Imprimantes',
+            position: 12,
+        },
+        {
+            type: 'indicator',
+            indicator: 'a11y',
+            text: 'Accessibilité',
+            position: 10,
+        },
     ],
 };
 
@@ -55,6 +72,7 @@ var BarManager = class {
     constructor() {
         this.defaultAddToStatusArea = Main.panel.addToStatusArea;
         this.indicators = {};
+        this.menuIndicators = {};
         this.defaultPanel = {};
 
         Main.panel.addToStatusArea = (...args) => {
@@ -71,10 +89,6 @@ var BarManager = class {
 
         this.resolveDefaultPanel();
         this.applyPrefs();
-
-        this.getIndicator('aggregateMenu').menu.addMenuItem(
-            (new MenuIndicator(this.getIndicator('keyboard'))).menu, 5
-        );
     }
 
     destroy() {
@@ -129,6 +143,18 @@ var BarManager = class {
         } 
     }
 
+    getMenuIndicator(name) {
+        return this.menuIndicators[name];
+    }
+
+    setMenuIndicator(name, indicator) {
+        if (Object.values(this.menuIndicators).includes(indicator)) {
+            return;
+        }
+
+        this.menuIndicators[name] = indicator;
+    }
+
     getIndicator(name) {
         return this.indicators[name];
     }
@@ -139,7 +165,7 @@ var BarManager = class {
         }
 
         if (indicator instanceof IndicatorCompatibility) {
-            const child = indicator.indicator;
+            const child = indicator.proxied;
 
             for (const key in this.indicators) {
                 if (this.indicators[key] === child) {
@@ -185,7 +211,7 @@ var BarManager = class {
         for (const key in this.boxes) {
             const box = this.boxes[key];
 
-            for (const position in prefs[key]) {
+            for (const position in (prefs[key] || [])) {
                 const name = prefs[key][position];
                 const indicator = this.getIndicator(name);
                 if (!indicator) continue;
@@ -193,10 +219,32 @@ var BarManager = class {
                 if (indicator instanceof PanelMenu.Button) {
                     Main.panel._addToPanelBox(name, indicator, position, box)
                 } else if (indicator instanceof IndicatorCompatibility) {
-                    box.insert_child_at_index(indicator.indicator, position);
+                    box.insert_child_at_index(indicator.proxied, position);
                 } else {
                     box.insert_child_at_index(indicator, position);
                 }
+            }
+        }
+
+        const aggregateMenu = this.getIndicator('aggregateMenu');
+
+        for (const key in (prefs.menu || [])) {
+            const data = prefs.menu[key];
+
+            if (data.type === 'indicator') {
+                const { text, icon, position, indicator: name } = data;
+                if (this.getMenuIndicator(name)) continue;
+
+                const indicator = this.getIndicator(name);
+                if (!indicator) continue;
+                
+                const menuIndicator = new MenuIndicator(indicator, text, icon);
+                this.setMenuIndicator(name, menuIndicator);
+
+                aggregateMenu._indicators.add_child(menuIndicator);
+                aggregateMenu.menu.addMenuItem(
+                    menuIndicator.menu, position
+                );
             }
         }
     }
