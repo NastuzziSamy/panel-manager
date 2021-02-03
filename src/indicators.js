@@ -25,7 +25,6 @@ var IndicatorCompatibility = GObject.registerClass(
         }
     }
 );
-global.d = []
 
 var MenuIndicator = GObject.registerClass(
 class MenuIndicator extends PanelMenu.SystemIndicator {
@@ -105,9 +104,9 @@ class MenuIndicator extends PanelMenu.SystemIndicator {
             this.subMenu.menu.box.insert_child_below(item, before);
         };
 
-        this.proxied.menu.box.remove_all_children = () => {
-            this.subMenu.menu.box.remove_all_children();
-        };
+        // this.proxied.menu.box.remove_all_children = () => {
+        //     this.subMenu.menu.box.remove_all_children();
+        // };
 
         this.proxied.menu.addMenuItem = (item, position) => {
             this.subMenu.menu.addMenuItem(item, position);

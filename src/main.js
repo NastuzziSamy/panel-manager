@@ -6,10 +6,14 @@ const { BarManager } = Me.imports.src.manager;
 
 var Extension = class {
     enable() {
-        this.barManager = new BarManager();
+        global.managers.bar = new BarManager();
     }
 
     disable() {
-        this.barManager.destroy();
+        if (global.managers.bar) {
+            global.managers.bar.destroy();
+        }
+
+        global.managers.bar = undefined;
     }
 };
