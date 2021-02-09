@@ -15,8 +15,8 @@ const LAYOUT_COMPATIBILITY = {
 };
 
 
-var IndicatorCompatibility = GObject.registerClass(
-    class IndicatorCompatibility extends St.BoxLayout {
+var ButtonIndicator = GObject.registerClass(
+    class ButtonIndicator extends St.BoxLayout {
         _init(indicator) {
             super._init();
 
@@ -26,8 +26,8 @@ var IndicatorCompatibility = GObject.registerClass(
     }
 );
 
-var MenuIndicator = GObject.registerClass(
-class MenuIndicator extends PanelMenu.SystemIndicator {
+var IndicatorToStatus = GObject.registerClass(
+class IndicatorToStatus extends PanelMenu.SystemIndicator {
     _init(indicator, text, icon) {
         super._init();
 
