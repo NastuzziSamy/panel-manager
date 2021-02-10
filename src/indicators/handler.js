@@ -69,10 +69,17 @@ var IndicatorHandler = class {
 
     getStatus() {
         if (!this.status && this.indicator) {
-            this.status = new IndicatorToStatus(this.indicator, 'Text');
+            this.status = new IndicatorToStatus(this.indicator, this.getPref('text'), this.getPref('icon'));
         }
 
         return this.status;
+    }
+
+    getPref(key, defaultValue) {
+        const value = (this.prefs || {})[key];
+        if (value === undefined) return defaultValue;
+
+        return value;
     }
 
     getPrefs() {

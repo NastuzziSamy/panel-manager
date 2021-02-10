@@ -38,11 +38,31 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
             this.subMenu.icon.icon_name = icon;
         }
 
+        this.setSignals();
         this.insertPanelLayout();
         this.proxyMenu();
         this.cloneMenuBox();
 
         this.menu.addMenuItem(this.subMenu);
+    }
+
+    destroy() {
+        this.proxied.disconnect(this.hideSignal);
+        this.proxied.disconnect(this.showSignal);
+    }
+
+    setSignals() {
+        this.hideSignal = this.proxied.connect('hide', () => this.hide());
+        this.showSignal = this.proxied.connect('show', () => this.show());
+    }
+
+    hide() {
+        this.subMenu._setOpenState(false);
+        this.subMenu.hide();
+    }
+
+    show() {
+        this.subMenu.show();
     }
 
     insertPanelLayout() {
