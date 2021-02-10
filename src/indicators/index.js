@@ -8,11 +8,9 @@ const SystemActions = imports.misc.systemActions;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const LAYOUT_COMPATIBILITY = {
-    indicators: [],
-    layouts: [],
-};
+const { SignalMixin, ProxyMixin } = Me.imports.src.mixins;
 
 
 var ButtonIndicator = GObject.registerClass(
@@ -26,6 +24,7 @@ var ButtonIndicator = GObject.registerClass(
     }
 );
 
+
 var IndicatorToStatus = GObject.registerClass(
 class IndicatorToStatus extends PanelMenu.SystemIndicator {
     _init(indicator, text, icon) {
@@ -38,22 +37,24 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
             this.subMenu.icon.icon_name = icon;
         }
 
-        this.setSignals();
+        this.connectSignals();
         this.insertPanelLayout();
-        this.proxyMenu();
         this.cloneMenuBox();
+        this.proxyMenu();
 
         this.menu.addMenuItem(this.subMenu);
     }
 
     destroy() {
-        this.proxied.disconnect(this.hideSignal);
-        this.proxied.disconnect(this.showSignal);
+        this.disconnectSignals();
+        this.restoreProxies();
     }
 
-    setSignals() {
-        this.hideSignal = this.proxied.connect('hide', () => this.hide());
-        this.showSignal = this.proxied.connect('show', () => this.show());
+    connectSignals() {
+        this.signals = [];
+
+        this.connectSignal(this.proxied, 'hide', () => this.hide());
+        this.connectSignal(this.proxied, 'show', () => this.show());
     }
 
     hide() {
@@ -116,26 +117,38 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
     }
 
     proxyMenu() {
-        this.proxied.menu.box.add = (item, position) => {
-            this.subMenu.menu.box.add_child(item, position);
-        };
-
-        this.proxied.menu.box.insert_child_below = (item, before) => {
-            this.subMenu.menu.box.insert_child_below(item, before);
-        };
-
-        // this.proxied.menu.box.remove_all_children = () => {
-        //     this.subMenu.menu.box.remove_all_children();
-        // };
-
-        this.proxied.menu.addMenuItem = (item, position) => {
+        this.applyProxy(this.proxied.menu, 'addMenuItem', (_, item, position) => {
             this.subMenu.menu.addMenuItem(item, position);
-        };
+        });
+        this.applyProxy(this.proxied.menu, 'removeAll', (callback) => {
+            this.subMenu.menu.box.remove_all_children();
 
-        // this.proxied.menu.box.add_child = (item, position) => log('add_child');
-        // this.proxied.menu.box.remove = (item) => log('remove');
-        // this.proxied.menu.box.remove_child = (item) => log('remove_child');
-        // this.proxied.menu.box.destroy = (item) => log('destroy');
-        // this.proxied.menu.box.destroy_all_children = (item) => log('destroy_all_children');
+            callback();
+        });
+
+        this.applyProxy(this.proxied.menu.box, 'add', (_, item, position) => {
+            this.subMenu.menu.box.add_child(item, position);
+        });
+        this.applyProxy(this.proxied.menu.box, 'add_child', (_, item, position) => {
+            this.subMenu.menu.box.add_child(item, position);
+        });
+        this.applyProxy(this.proxied.menu.box, 'insert_child_below', (_, item, before) => {
+            this.subMenu.menu.box.insert_child_below(item, before);
+        });
+
+        this.applyProxy(this.proxied.menu.box, 'remove_child', (_, item) => {
+            this.subMenu.menu.box.remove(item);
+        });
+        this.applyProxy(this.proxied.menu.box, 'remove_all_children', () => {
+            this.subMenu.menu.box.remove_all_children();
+        });
+
+        this.applyProxy(this.proxied.menu.box, 'destroy_all_children', (callback) => {
+            this.subMenu.menu.box.destroy_all_children();
+
+            callback();
+        });
     }
 });
+
+Object.assign(IndicatorToStatus.prototype, SignalMixin, ProxyMixin);
