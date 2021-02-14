@@ -25,7 +25,7 @@ var IndicatorManager = class {
     }
 
     resolveElement(child) {
-        if (child instanceof St.BoxLayout) {
+        if (child instanceof St.BoxLayout && !(child instanceof PanelMenu.SystemIndicator)) {
             if (this.hasElement(child)) {
                 return this.findIndicator(child);
             }
@@ -45,19 +45,19 @@ var IndicatorManager = class {
     }
 
     resolveIndicators(boxes) {
-        // const menu = Main.panel.statusArea.aggregateMenu;
-        // const menuKeys = Object.keys(menu);
-        // for (const index in menuKeys) {
-        //     const key = menuKeys[index];
-        //     const [, name] = key.match(/^_([a-zA-Z]*)$/) || [];
-        //     if (!name) continue;
+        const menu = Main.panel.statusArea.aggregateMenu;
+        const menuKeys = Object.keys(menu);
+        for (const index in menuKeys) {
+            const key = menuKeys[index];
+            const [, name] = key.match(/^_([a-zA-Z]*)$/) || [];
+            if (!name || name === 'delegate' || name === 'indicators') continue;
 
-        //     const child = menu[key];
-        //     let indicator = this.resolveElement(child);
-        //     if (!indicator) continue;
+            const child = menu[key];
+            let indicator = this.resolveElement(child);
+            if (!indicator) continue;
 
-        //     this.setIndicator(name, indicator);
-        // }
+            this.setIndicator(name, indicator);
+        }
         
         for (const key in Main.panel.statusArea) {
             this.setIndicator(key, Main.panel.statusArea[key]);

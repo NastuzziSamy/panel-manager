@@ -36,8 +36,6 @@ const BAR_PREFS = {
 };
 
 
-
-
 var BarManager = class {
     constructor() {
         this.indicatorManager = new IndicatorManager;
@@ -47,8 +45,8 @@ var BarManager = class {
             left: Main.panel._leftBox,
             center: Main.panel._centerBox,
             right: Main.panel._rightBox,
-            // menu: Main.panel.statusArea.aggregateMenu.menu.box,
-            // status: Main.panel.statusArea.aggregateMenu._indicators,
+            menu: Main.panel.statusArea.aggregateMenu.menu.box,
+            status: Main.panel.statusArea.aggregateMenu._indicators,
         }
 
         this.resolveDefaultBar();

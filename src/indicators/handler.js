@@ -47,10 +47,10 @@ var IndicatorHandler = class {
     }
 
     addElement(element) {
-        if (element instanceof PanelMenu.Button || element instanceof ButtonIndicator || element instanceof St.BoxLayout) {
-            this.elements.indicator = element;
-        } else if (element instanceof PanelMenu.SystemIndicator || element instanceof IndicatorToStatus) {
+        if (element instanceof PanelMenu.SystemIndicator || element instanceof IndicatorToStatus) {
             this.elements.status = element;
+        } else if (element instanceof PanelMenu.Button || element instanceof ButtonIndicator || element instanceof St.BoxLayout) {
+            this.elements.indicator = element;
         }
     }
 
