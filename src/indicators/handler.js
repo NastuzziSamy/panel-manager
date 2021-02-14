@@ -6,6 +6,9 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
 
 const INDICATOR_PREFS = {
+    'app-indicators': {
+        order: ['Slack1', 'discord1'],
+    },
     'keyboard': {
         text: 'Langue',
         icon: 'format-text-bold',
@@ -112,7 +115,11 @@ var IndicatorHandler = class {
             }
         } else if (this.getIndicator() instanceof ButtonIndicator) {
             box.insert_child_at_index(this.getIndicator().proxied, position);
+        } else {
+            return 0;
         }
+
+        return 1;
     }
 };
 
@@ -120,11 +127,13 @@ var AppIndicatorHandler = class extends IndicatorHandler {
     constructor(name) {
         super(name);
 
-        this.elements = [];
+        this.elements = {};
     }
 
     addElement(element) {
-        this.elements.push(element);
+        const [, name] = element.name.match(/^appindicator.*\/(.+)$/)
+        
+        this.elements[name] = element;
     }
 
     hasElement(element) {
@@ -139,18 +148,18 @@ var AppIndicatorHandler = class extends IndicatorHandler {
         return false;
     }
 
-    getIndicator() {
-        return this.elements;
+    getIndicator(name) {
+        if (!name) return null;
+
+        return this.elements[name].getIndicator();
     }
 
-    getStatus() {
-        return this.elements;
+    getStatus(name) {
+        if (!name) return null;
+
+        return this.elements[name].getStatus();
     }
 
-    // getMenu() {
-    //     return this.getStatus().menu;
-    // }
-    
     getPref(key, defaultValue) {
         const value = (this.prefs || {})[key];
         if (value === undefined) return defaultValue;
@@ -169,8 +178,13 @@ var AppIndicatorHandler = class extends IndicatorHandler {
     }
 
     insertIntoBox(box, position) {
-        for (const key in this.elements) {
-            this.elements[key].insertIntoBox(box, position);
+        const keys = this.getPref('order', Object.keys(this.elements));
+        let added = 0;
+
+        for (const key in keys) {
+            added += this.elements[keys[key]].insertIntoBox(box, position + added);
         }
+
+        return added;
     }
 }

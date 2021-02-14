@@ -13,13 +13,13 @@ const BAR_PREFS = {
     left: [
         'aggregateMenu',
         'wm-bar',
-        'appIndicators',
     ],
     center: [
         'appMenu',
         'no-name-0',
     ],
     right: [
+        'app-indicators',
         'lockkeys',
         'a11y',
         'de.ttll.GnomeScreenshot',
@@ -47,7 +47,7 @@ var BarManager = class {
             left: Main.panel._leftBox,
             center: Main.panel._centerBox,
             right: Main.panel._rightBox,
-            menu: Main.panel.statusArea.aggregateMenu.menu.box,
+            // menu: Main.panel.statusArea.aggregateMenu.menu.box,
             // status: Main.panel.statusArea.aggregateMenu._indicators,
         }
 
@@ -107,14 +107,16 @@ var BarManager = class {
         for (const key in this.boxes) {
             const box = this.boxes[key];
             const boxPrefs = prefs[key] || {};
+            let position = 0;
 
-            for (const position in boxPrefs) {
-                const name = boxPrefs[position];
+            for (const subKey in boxPrefs) {
+                const name = boxPrefs[subKey];
                 const indicator = this.indicatorManager.getIndicator(name);
                 if (!indicator) continue;
     
                 indicator.applyPrefs();
-                indicator.insertIntoBox(box, position);
+                
+                position += indicator.insertIntoBox(box, position);
             }
         }
     }

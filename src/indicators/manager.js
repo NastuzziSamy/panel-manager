@@ -18,7 +18,7 @@ var IndicatorManager = class {
 
     resetIndicators() {
         this.indicators = {
-            appIndicators: new AppIndicatorHandler(),
+            'app-indicators': new AppIndicatorHandler(),
         };
 
         this.compatibilityNumber = 0;
@@ -120,7 +120,7 @@ var IndicatorManager = class {
         this.indicators[name] = new IndicatorHandler(name);
         this.indicators[name].addElement(element);
 
-        if (name.match(/appindicator/)) {
+        if (name.match(/^appindicator/)) {
             this.addAppIndicator(this.indicators[name]);
         }
     }
@@ -136,6 +136,6 @@ var IndicatorManager = class {
     }
 
     addAppIndicator(element) {
-        this.getIndicator('appIndicators').addElement(element);
+        this.getIndicator('app-indicators').addElement(element);
     }
 };
