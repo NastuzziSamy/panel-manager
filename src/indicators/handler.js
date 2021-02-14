@@ -10,6 +10,9 @@ const INDICATOR_PREFS = {
         text: 'Langue',
         icon: 'format-text-bold',
     },
+    'clipboardIndicator': {
+        text: 'Clipboard',
+    },
     'drive-menu': {
         text: 'Disques connectés',
     },
@@ -31,20 +34,20 @@ const INDICATOR_PREFS = {
 var IndicatorHandler = class {
     constructor(name) {
         this.name = name;
-        this.indicator = null;
-        this.status = null;
         this.prefs = INDICATOR_PREFS[name] || {};
+
+        this.elements = {
+            indicator: null,
+            status: null,
+            menu: null,
+        };
     }
 
-    setElement(element) {
-        if (element instanceof PanelMenu.Button || element instanceof ButtonIndicator) {
-            this.indicator = element;
-        } else if (element instanceof St.BoxLayout) {
-            this.indicator = element;
-        } else if (element instanceof ButtonIndicator) {
-            this.indicator = element;
+    addElement(element) {
+        if (element instanceof PanelMenu.Button || element instanceof ButtonIndicator || element instanceof St.BoxLayout) {
+            this.elements.indicator = element;
         } else if (element instanceof PanelMenu.SystemIndicator || element instanceof IndicatorToStatus) {
-            this.status = element;
+            this.elements.status = element;
         }
     }
 
@@ -52,29 +55,33 @@ var IndicatorHandler = class {
         if (!element) return false;
 
         const toCompare = [
-            this.indicator, this.status, 
-            (this.indicator || {}).proxied, (this.status || {}).proxied,
+            this.elements.indicator, this.elements.status, 
+            (this.elements.indicator || {}).proxied, (this.elements.status || {}).proxied,
         ];
 
         return toCompare.includes(element) || (element.proxied && toCompare.includes(element.proxied));
     }
 
     getIndicator() {
-        // if (!this.indicator && this.status) {
-        //     this.indicator = new StatusToIndicator(this.status);
+        // if (!this.elements.indicator && this.elements.status) {
+        //     this.elements.indicator = new StatusToIndicator(this.elements.status);
         // }
 
-        return this.indicator;
+        return this.elements.indicator;
     }
 
     getStatus() {
-        if (!this.status && this.indicator) {
-            this.status = new IndicatorToStatus(this.indicator, this.getPref('text'), this.getPref('icon'));
+        if (!this.elements.status && this.elements.indicator) {
+            this.elements.status = new IndicatorToStatus(this.elements.indicator, this.getPref('text', this.name), this.getPref('icon'));
         }
 
-        return this.status;
+        return this.elements.status;
     }
 
+    // getMenu() {
+    //     return this.getStatus().menu;
+    // }
+    
     getPref(key, defaultValue) {
         const value = (this.prefs || {})[key];
         if (value === undefined) return defaultValue;
@@ -96,11 +103,74 @@ var IndicatorHandler = class {
         if (box === Main.panel.statusArea.aggregateMenu._indicators) {
             box.insert_child_at_index(this.getStatus(), position);
         } else if (box === Main.panel.statusArea.aggregateMenu.menu.box) {
-            Main.panel.statusArea.aggregateMenu.menu.addMenuItem(this.getIndicator().menu, position);
+            Main.panel.statusArea.aggregateMenu.menu.addMenuItem(this.getStatus().menu, position);
         } else if (this.getIndicator() instanceof PanelMenu.Button) {
-            Main.panel._addToPanelBox(this.name, this.getIndicator(), position, box)
+            if (this.getIndicator().container.get_children().length === 0) {
+                box.add_child(this.getIndicator());
+            } else {
+                Main.panel._addToPanelBox(this.name, this.getIndicator(), position, box)
+            }
         } else if (this.getIndicator() instanceof ButtonIndicator) {
             box.insert_child_at_index(this.getIndicator().proxied, position);
         }
     }
 };
+
+var AppIndicatorHandler = class extends IndicatorHandler {
+    constructor(name) {
+        super(name);
+
+        this.elements = [];
+    }
+
+    addElement(element) {
+        this.elements.push(element);
+    }
+
+    hasElement(element) {
+        for (const key in this.elements) {
+            const toCompare = this.elements[key];
+
+            if (element === toCompare || toCompare.hasElement(element)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    getIndicator() {
+        return this.elements;
+    }
+
+    getStatus() {
+        return this.elements;
+    }
+
+    // getMenu() {
+    //     return this.getStatus().menu;
+    // }
+    
+    getPref(key, defaultValue) {
+        const value = (this.prefs || {})[key];
+        if (value === undefined) return defaultValue;
+
+        return value;
+    }
+
+    getPrefs() {
+        return this.prefs;
+    }
+
+    applyPrefs() {
+        for (const key in this.elements) {
+            this.elements[key].applyPrefs();
+        }
+    }
+
+    insertIntoBox(box, position) {
+        for (const key in this.elements) {
+            this.elements[key].insertIntoBox(box, position);
+        }
+    }
+}

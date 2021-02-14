@@ -13,9 +13,7 @@ const BAR_PREFS = {
     left: [
         'aggregateMenu',
         'wm-bar',
-        'appindicator-:1.1554/org/ayatana/NotificationItem/Slack1',
-        'appindicator-:1.1618/org/ayatana/NotificationItem/discord1',
-        'appindicator-:1.123/org/ayatana/NotificationItem/software_update_available',
+        'appIndicators',
     ],
     center: [
         'appMenu',
@@ -24,13 +22,13 @@ const BAR_PREFS = {
     right: [
         'lockkeys',
         'a11y',
-        'clipboardIndicator',
         'de.ttll.GnomeScreenshot',
         'openweatherMenu',
         'dateMenu',
     ],
     menu: [
         'keyboard',
+        'clipboardIndicator',
         'drive-menu',
         'printers',
         'a11y',
@@ -49,7 +47,7 @@ var BarManager = class {
             left: Main.panel._leftBox,
             center: Main.panel._centerBox,
             right: Main.panel._rightBox,
-            // menu: Main.panel.statusArea.aggregateMenu.menu.box,
+            menu: Main.panel.statusArea.aggregateMenu.menu.box,
             // status: Main.panel.statusArea.aggregateMenu._indicators,
         }
 
@@ -73,7 +71,7 @@ var BarManager = class {
     }
 
     resolveDefaultBar() {
-        this.indicatorManager.resolveIndicators();
+        this.indicatorManager.resolveIndicators(this.boxes);
 
         for (const key in this.boxes) {
             const box = this.boxes[key];
@@ -93,7 +91,7 @@ var BarManager = class {
     }
 
     cleanBoxes() {
-        this.indicatorManager.resolveIndicators();
+        this.indicatorManager.resolveIndicators(this.boxes);
 
         for (const key in this.boxes) {
             if (key === 'menu' || key === 'status') continue; // TODO: To handle.

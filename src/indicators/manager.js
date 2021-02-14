@@ -4,21 +4,32 @@ const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
-const { IndicatorHandler } = Me.imports.src.indicators.handler;
+const { IndicatorHandler, AppIndicatorHandler } = Me.imports.src.indicators.handler;
 
 const INDICATOR_DEFAULT_NAME = 'no-name-';
 
 
 var IndicatorManager = class {
     constructor() {
-        this.indicators = {};
-        this.compatibilityNumber = 0;
+        this.resetIndicators();
 
         this.resolveIndicators();
     }
 
+    resetIndicators() {
+        this.indicators = {
+            appIndicators: new AppIndicatorHandler(),
+        };
+
+        this.compatibilityNumber = 0;
+    }
+
     resolveElement(child) {
         if (child instanceof St.BoxLayout) {
+            if (this.hasElement(child)) {
+                return this.findIndicator(child);
+            }
+
             return new ButtonIndicator(child);
         }
 
@@ -33,7 +44,7 @@ var IndicatorManager = class {
         }
     }
 
-    resolveIndicators() {
+    resolveIndicators(boxes) {
         // const menu = Main.panel.statusArea.aggregateMenu;
         // const menuKeys = Object.keys(menu);
         // for (const index in menuKeys) {
@@ -52,15 +63,13 @@ var IndicatorManager = class {
             this.setIndicator(key, Main.panel.statusArea[key]);
         }
 
-        const boxes = Main.panel.get_children();
-        // boxes.push(menu._indicators);
-
         for (const key in boxes) {
             const box = boxes[key];
             const children = box.get_children();
 
             for (const subKey in children) {
                 const child = children[subKey];
+
                 let indicator = this.resolveElement(child);
                 if (!indicator) continue;
 
@@ -103,11 +112,17 @@ var IndicatorManager = class {
         if (this.hasElement(element)) return;
 
         if (this.hasIndicator(name)) {
-            this.getIndicator(name).setElement(element);
+            this.getIndicator(name).addElement(element);
+
+            return;
         }
 
         this.indicators[name] = new IndicatorHandler(name);
-        this.indicators[name].setElement(element);
+        this.indicators[name].addElement(element);
+
+        if (name.match(/appindicator/)) {
+            this.addAppIndicator(this.indicators[name]);
+        }
     }
 
     addIndicator(element) {
@@ -115,8 +130,12 @@ var IndicatorManager = class {
 
         const name = INDICATOR_DEFAULT_NAME + (this.compatibilityNumber++);
         const indicator = new IndicatorHandler(name);
-        indicator.setElement(element);
+        indicator.addElement(element);
 
         this.indicators[name] = indicator;
+    }
+
+    addAppIndicator(element) {
+        this.getIndicator('appIndicators').addElement(element);
     }
 };

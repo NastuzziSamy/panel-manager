@@ -48,6 +48,8 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
     destroy() {
         this.disconnectSignals();
         this.restoreProxies();
+
+        super.destroy();
     }
 
     connectSignals() {
