@@ -27,7 +27,15 @@ var IndicatorManager = class {
     resolveElement(child) {
         if (child instanceof St.BoxLayout && !(child instanceof PanelMenu.SystemIndicator)) {
             if (this.hasElement(child)) {
-                return this.findIndicator(child);
+                const indicator = this.findIndicator(child);
+
+                if (indicator.elements.indicator) {
+                    return indicator.elements.indicator;
+                }
+
+                if (indicator.elements.status) {
+                    return indicator.elements.status;
+                }
             }
 
             return new ButtonIndicator(child);
@@ -64,6 +72,8 @@ var IndicatorManager = class {
         }
 
         for (const key in boxes) {
+            if (key === 'menu') continue;
+
             const box = boxes[key];
             const children = box.get_children();
 
@@ -72,7 +82,7 @@ var IndicatorManager = class {
 
                 let indicator = this.resolveElement(child);
                 if (!indicator) continue;
-
+                
                 this.addIndicator(indicator);
             }
         }

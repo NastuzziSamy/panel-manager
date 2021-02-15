@@ -57,6 +57,10 @@ var IndicatorHandler = class {
     hasElement(element) {
         if (!element) return false;
 
+        if (this.elements.status && this.elements.status instanceof PanelMenu.SystemIndicator && this.elements.status.menu.box === element) {
+            return true;
+        }
+
         const toCompare = [
             this.elements.indicator, this.elements.status, 
             (this.elements.indicator || {}).proxied, (this.elements.status || {}).proxied,
@@ -81,10 +85,6 @@ var IndicatorHandler = class {
         return this.elements.status;
     }
 
-    // getMenu() {
-    //     return this.getStatus().menu;
-    // }
-    
     getPref(key, defaultValue) {
         const value = (this.prefs || {})[key];
         if (value === undefined) return defaultValue;
@@ -137,15 +137,7 @@ var AppIndicatorHandler = class extends IndicatorHandler {
     }
 
     hasElement(element) {
-        for (const key in this.elements) {
-            const toCompare = this.elements[key];
-
-            if (element === toCompare || toCompare.hasElement(element)) {
-                return true;
-            }
-        }
-
-        return false;
+        return Object.values(this.elements).includes(element);
     }
 
     getIndicator(name) {
