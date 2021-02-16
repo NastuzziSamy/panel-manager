@@ -13,8 +13,6 @@ const INDICATOR_DEFAULT_NAME = 'indicator-';
 var IndicatorManager = class {
     constructor() {
         this.resetIndicators();
-
-        this.resolveIndicators();
     }
 
     resetIndicators() {
@@ -59,7 +57,7 @@ var IndicatorManager = class {
         }
 
         for (const key in menus) {
-            const menu = menus[key];
+            const menu = menus[key].box;
             const menuKeys = Object.keys(menu);
 
             for (const index in menuKeys) {
@@ -165,7 +163,7 @@ var IndicatorManager = class {
         this.getIndicator('app-indicators').addElement(element);
     }
 
-    addIndicatorToBox(box, { name, position, ...prefs}) {
+    addToBox(box, { name, position, ...prefs}) {
         const indicator = this.getIndicator(name);
         if (!indicator) return;
 

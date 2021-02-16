@@ -12,8 +12,9 @@ const { BoxManager } = Me.imports.src.boxes.manager;
 const BAR_PREFS = {
     left: [
         {
-            type: 'menu',
+            type: 'box',
             name: 'aggregateMenu',
+            menuAlignement: 1,
         },
         {
             type: 'indicator',
@@ -47,10 +48,6 @@ const BAR_PREFS = {
         {
             type: 'indicator',
             name: 'de.ttll.GnomeScreenshot',
-        },
-        {
-            type: 'indicator',
-            name: 'openweatherMenu',
         },
         {
             type: 'indicator',
@@ -268,7 +265,7 @@ var BarManager = class {
 
     resolveDefaultBar() {
         const boxes = this.boxManager.getBoxes();
-        this.indicatorManager.resolveIndicators(boxes);
+        this.indicatorManager.resolveIndicators(this.boxManager.getMenus(), boxes);
         
         for (const key in boxes) {
             const box = boxes[key];
@@ -288,7 +285,7 @@ var BarManager = class {
     }
 
     cleanBoxes() {
-        this.indicatorManager.resolveIndicators(this.boxManager.menus, this.boxManager.getBoxes());
+        this.indicatorManager.resolveIndicators(this.boxManager.getMenus(), this.boxManager.getBoxes());
         this.boxManager.cleanBoxes();
     }
 
@@ -312,13 +309,10 @@ var BarManager = class {
     handleBox(box, { type, ...params }) {
         switch (type) {
             case 'indicator':
-                return this.indicatorManager.addIndicatorToBox(box, params);
+                return this.indicatorManager.addToBox(box, params);
 
-            case 'menu':
-                return this.boxManager.addMenuToBox(box, params);
-
-            case 'layout':
-                return this.boxManager.addLayoutToBox(box, params);
+            case 'box':
+                return this.boxManager.addToBox(box, params);
 
             case 'separator':
                 box.insert_child_at_index(new PopupMenu.PopupSeparatorMenuItem(params.text), params.position);

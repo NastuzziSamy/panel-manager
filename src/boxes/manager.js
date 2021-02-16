@@ -1,48 +1,84 @@
 const Main = imports.ui.main;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+
+const { LayoutHandler, MenuHandler } = Me.imports.src.boxes.handler;
+const { AggregateMenu } = Me.imports.src.boxes.index;
 
 
-const MENU_PREFS = [
-    []
-];
-
-
-class BoxManager {
+var BoxManager = class {
     constructor() {
-        this.layouts = {
+        this.setDefaultBoxes();
+    }
+
+    setDefaultBoxes() {
+        this.layouts = {};
+        this.menus = {};
+
+        const boxes = {
             left: Main.panel._leftBox,
             center: Main.panel._centerBox,
             right: Main.panel._rightBox,
-        };
-        
-        this.menus = {
             aggregateMenu: Main.panel.statusArea.aggregateMenu,
         };
+
+        for (const name in boxes) {
+            this.setBox(name, boxes[name]);
+        }
     }
 
     getLayout(name) {
         return this.layouts[name];
     }
 
-    getMenu(name) {
-        return this.menus[name];
+    setLayout(name, layout) {
+        this.layouts[name] = new LayoutHandler(name, layout);
     }
 
     getLayouts() {
         return this.layouts;
     }
 
+    getMenu(name) {
+        return this.menus[name];
+    }
+
+    setMenu(name, menu) {
+        this.menus[name] = new MenuHandler(name, menu);
+    }
+
     getMenus() {
         return this.menus;
     }
 
+    getHandler(name) {
+        return this.getHandlers()[name];
+    }
+
+    getHandlers() {
+        return Object.assign({}, this.layouts, this.menus);
+    }
+
+    getBox(name) {
+        return this.getBoxes()[name];
+    }
+
+    setBox(name, box) {
+        if ((box === Main.panel.statusArea.aggregateMenu) || box instanceof AggregateMenu) {
+            return this.setMenu(name, box);
+        }
+
+        return this.setLayout(name, box);
+    }
+
     getBoxes() {
-        const boxes = Object.assign({}, this.layouts);
+        const boxes = Object.assign({});
+
+        for (const key in this.layouts) {
+            Object.assign(boxes, this.layouts[key].getBoxes());
+        }
 
         for (const key in this.menus) {
-            const menu = this.menus[key];
-
-            boxes[key + '-menu'] = menu.menu.box;
-            boxes[key + '-status'] = menu._indicators;
+            Object.assign(boxes, this.menus[key].getBoxes());
         }
 
         return boxes;
@@ -58,24 +94,13 @@ class BoxManager {
         }
     }
 
-    addLayoutToBox(box, { name, position, ...prefs}) {
-        const layout = this.getLayout(name);
-        if (!layout) return;
+    addToBox(box, { name, position, ...prefs }) {
+        const handler = this.getHandler(name);
+        if (!handler) return;
 
-        // layout.applyPrefs(prefs);
-        box.insert_child_at_index(layout, position);
-     
-        return 1;
-    }
+        handler.applyPrefs(prefs);
+        Main.panel._addToPanelBox(name, handler.box, position, box);
 
-    addMenuToBox(box, { name, position, ...prefs}) {
-        global.a = box;
-        const menu = this.getMenu(name);
-        global.b = menu;
-        if (!menu) return;
-
-        // menu.applyPrefs(prefs);
-        Main.panel._addToPanelBox(name, menu, position, box);
         return 1;
     }
 }

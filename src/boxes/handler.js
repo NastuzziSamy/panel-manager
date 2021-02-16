@@ -4,50 +4,42 @@ const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 
-const BOX_PREFS = {
-    'aggregateMenu': {
-        menuAlignement: 1,
-    },
-    'menu-0': {
-        menuAlignement: 0,
-    },
-}
-
-
 var BoxHandler = class {
-    constructor(name) {
+    constructor(name, box) {
         this.name = name;
+        this.box = box;
+    }
+
+    getBox() {
+        return this.box;
     }
 }
 
 
 var LayoutHandler = class extends BoxHandler {
-    constructor(name, layout) {
-        super(name);
-
-        this.layout = layout;
+    getBoxes() {
+        return {
+            [this.name]: this.box,
+        };
     }
 
-    getBoxes() {
-        return [this.layout];
+    applyPrefs(prefs) {
+
     }
 };
 
 
 var MenuHandler = class extends BoxHandler {
-    constructor(name, menu) {
-        super(name);
-
-        this.menu = menu;
-    }
-
     getBoxes() {
-        return [this.menu.menu.box, this.menu._indicators];
+        return {
+            [this.name + '-menu']: this.box.menu.box,
+            [this.name + '-status']: this.box._indicators,
+        };
     }
 
     applyPrefs(prefs) {
         if (prefs.menuAlignement !== undefined) {
-            this.getIndicator().menu._arrowAlignment = prefs.menuAlignement;
+            this.box.menu._arrowAlignment = prefs.menuAlignement;
         }
     }
 };

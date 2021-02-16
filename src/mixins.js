@@ -43,3 +43,8 @@ var ProxyMixin = {
         this.proxies = [];
     }
 };
+
+
+var AggregateMenuMixin = {
+    
+}
