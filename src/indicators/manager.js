@@ -164,4 +164,11 @@ var IndicatorManager = class {
     addAppIndicator(element) {
         this.getIndicator('app-indicators').addElement(element);
     }
+
+    addIndicatorToBox(box, { name, position, ...prefs}) {
+        const indicator = this.getIndicator(name);
+        if (!indicator) return;
+
+        return indicator.insertIntoBox(box, position, prefs);
+    }
 };

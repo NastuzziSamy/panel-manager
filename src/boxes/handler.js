@@ -17,26 +17,6 @@ const BOX_PREFS = {
 var BoxHandler = class {
     constructor(name) {
         this.name = name;
-        this.prefs = INDICATOR_PREFS[name] || {};
-    }
-
-    getPref(key, defaultValue) {
-        const value = (this.prefs || {})[key];
-        if (value === undefined) return defaultValue;
-
-        return value;
-    }
-
-    getPrefs() {
-        return this.prefs;
-    }
-
-    applyPrefs() {
-
-    }
-
-    getBoxes() {
-
     }
 }
 
@@ -63,5 +43,11 @@ var MenuHandler = class extends BoxHandler {
 
     getBoxes() {
         return [this.menu.menu.box, this.menu._indicators];
+    }
+
+    applyPrefs(prefs) {
+        if (prefs.menuAlignement !== undefined) {
+            this.getIndicator().menu._arrowAlignment = prefs.menuAlignement;
+        }
     }
 };

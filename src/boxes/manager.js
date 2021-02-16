@@ -19,6 +19,22 @@ class BoxManager {
         };
     }
 
+    getLayout(name) {
+        return this.layouts[name];
+    }
+
+    getMenu(name) {
+        return this.menus[name];
+    }
+
+    getLayouts() {
+        return this.layouts;
+    }
+
+    getMenus() {
+        return this.menus;
+    }
+
     getBoxes() {
         const boxes = Object.assign({}, this.layouts);
 
@@ -40,5 +56,26 @@ class BoxManager {
 
             box.remove_all_children();
         }
+    }
+
+    addLayoutToBox(box, { name, position, ...prefs}) {
+        const layout = this.getLayout(name);
+        if (!layout) return;
+
+        // layout.applyPrefs(prefs);
+        box.insert_child_at_index(layout, position);
+     
+        return 1;
+    }
+
+    addMenuToBox(box, { name, position, ...prefs}) {
+        global.a = box;
+        const menu = this.getMenu(name);
+        global.b = menu;
+        if (!menu) return;
+
+        // menu.applyPrefs(prefs);
+        Main.panel._addToPanelBox(name, menu, position, box);
+        return 1;
     }
 }

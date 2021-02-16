@@ -5,33 +5,33 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
 
-const INDICATOR_PREFS = {
-    'app-indicators': {
-        order: ['Slack1', 'discord1'],
-    },
-    'keyboard': {
-        text: 'Langue',
-        icon: 'format-text-bold',
-    },
-    'clipboardIndicator': {
-        text: 'Clipboard',
-    },
-    'drive-menu': {
-        text: 'Disques connectés',
-    },
-    'printers': {
-        text: 'Imprimantes',
-    },
-    'a11y': {
-        text: 'Accessibilité',
-    },
-}
+// const INDICATOR_PREFS = {
+//     'app-indicators': {
+//         order: ['Slack1', 'discord1'],
+//     },
+//     'keyboard': {
+//         text: 'Langue',
+//         icon: 'format-text-bold',
+//     },
+//     'clipboardIndicator': {
+//         text: 'Clipboard',
+//     },
+//     'drive-menu': {
+//         text: 'Disques connectés',
+//     },
+//     'printers': {
+//         text: 'Imprimantes',
+//     },
+//     'a11y': {
+//         text: 'Accessibilité',
+//     },
+// }
 
 
 var IndicatorHandler = class {
     constructor(name) {
         this.name = name;
-        this.prefs = INDICATOR_PREFS[name] || {};
+        // this.prefs = INDICATOR_PREFS[name] || {};
 
         this.elements = {
             indicator: null,
@@ -63,6 +63,14 @@ var IndicatorHandler = class {
         return toCompare.includes(element) || (element.proxied && toCompare.includes(element.proxied));
     }
 
+    getStatus() {
+        if (!this.elements.status && this.elements.indicator) {
+            this.elements.status = new IndicatorToStatus(this.elements.indicator);
+        }
+
+        return this.elements.status;
+    }
+
     getIndicator() {
         // if (!this.elements.indicator && this.elements.status) {
         //     this.elements.indicator = new StatusToIndicator(this.elements.status);
@@ -71,32 +79,21 @@ var IndicatorHandler = class {
         return this.elements.indicator;
     }
 
-    getStatus() {
-        if (!this.elements.status && this.elements.indicator) {
-            this.elements.status = new IndicatorToStatus(this.elements.indicator, this.getPref('text', this.name), this.getPref('icon'));
-        }
-
-        return this.elements.status;
-    }
-
-    getPref(key, defaultValue) {
-        const value = (this.prefs || {})[key];
-        if (value === undefined) return defaultValue;
-
-        return value;
-    }
-
-    getPrefs() {
-        return this.prefs;
-    }
-
-    applyPrefs() {
-        if (this.prefs.menuAlignement !== undefined) {
-            this.getIndicator().menu._arrowAlignment = this.prefs.menuAlignement;
+    applyPrefs({ text, icon }) {
+        if (this.elements.status instanceof IndicatorToStatus) {
+            if (text) {
+                this.elements.status.subMenu.label.text = text;
+            }
+            
+            if (icon) {
+                this.elements.status.subMenu.icon.icon_name = icon;
+            }
         }
     }
 
-    insertIntoBox(box, position) {
+    insertIntoBox(box, position, prefs) {
+        this.applyPrefs(prefs);
+
         if (box === Main.panel.statusArea.aggregateMenu._indicators) {
             box.insert_child_at_index(this.getStatus(), position);
         } else if (box === Main.panel.statusArea.aggregateMenu.menu.box) {
@@ -105,7 +102,7 @@ var IndicatorHandler = class {
             if (this.getIndicator().container.get_children().length === 0) {
                 box.add_child(this.getIndicator());
             } else {
-                Main.panel._addToPanelBox(this.name, this.getIndicator(), position, box)
+                Main.panel._addToPanelBox(this.name, this.getIndicator(), position, box);
             }
         } else if (this.getIndicator() instanceof ButtonIndicator) {
             box.insert_child_at_index(this.getIndicator().proxied, position);
@@ -146,29 +143,24 @@ var AppIndicatorHandler = class extends IndicatorHandler {
         return this.elements[name].getStatus();
     }
 
-    getPref(key, defaultValue) {
-        const value = (this.prefs || {})[key];
-        if (value === undefined) return defaultValue;
-
-        return value;
-    }
-
-    getPrefs() {
-        return this.prefs;
-    }
-
-    applyPrefs() {
+    applyPrefs(prefs) {
         for (const key in this.elements) {
-            this.elements[key].applyPrefs();
+            this.elements[key].applyPrefs(prefs);
         }
     }
 
-    insertIntoBox(box, position) {
-        const keys = this.getPref('order', Object.keys(this.elements));
+    insertIntoBox(box, position, prefs) {
+        this.applyPrefs(prefs);
+
+        const keys = prefs.order || Object.keys(this.elements);
         let added = 0;
 
         for (const key in keys) {
-            added += this.elements[keys[key]].insertIntoBox(box, position + added);
+            const element = this.elements[keys[key]];
+
+            if (element) {
+                added += element.insertIntoBox(box, position + added, prefs);
+            }
         }
 
         return added;

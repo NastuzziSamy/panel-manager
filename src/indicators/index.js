@@ -27,16 +27,12 @@ var ButtonIndicator = GObject.registerClass(
 
 var IndicatorToStatus = GObject.registerClass(
 class IndicatorToStatus extends PanelMenu.SystemIndicator {
-    _init(indicator, text, icon) {
+    _init(indicator) {
         super._init();
 
         this.proxied = indicator;
-        this.subMenu = new PopupMenu.PopupSubMenuMenuItem(text, true);
+        this.subMenu = new PopupMenu.PopupSubMenuMenuItem('', true);
         
-        if (icon) {
-            this.subMenu.icon.icon_name = icon;
-        }
-
         this.connectSignals();
         this.insertPanelLayout();
         this.cloneMenuBox();

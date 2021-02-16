@@ -11,68 +11,232 @@ const { BoxManager } = Me.imports.src.boxes.manager;
 
 const BAR_PREFS = {
     left: [
-        'aggregateMenu',
-        'wm-bar',
+        {
+            type: 'menu',
+            name: 'aggregateMenu',
+        },
+        {
+            type: 'indicator',
+            name: 'wm-bar',
+        },
     ],
     center: [
-        'appMenu',
-        'indicator-0',
+        {
+            type: 'indicator',
+            name: 'appMenu',
+        },
+        {
+            type: 'indicator',
+            name: 'indicator-0',
+        },
     ],
     right: [
-        'app-indicators',
-        'lockkeys',
-        'a11y',
-        'de.ttll.GnomeScreenshot',
-        'openweatherMenu',
-        'dateMenu',
-        'menu',
+        {
+            type: 'indicator',
+            name: 'app-indicators',
+            order: ['Slack1', 'discord1'],
+        },
+        {
+            type: 'indicator',
+            name: 'lockkeys',
+        },
+        {
+            type: 'indicator',
+            name: 'a11y',
+        },
+        {
+            type: 'indicator',
+            name: 'de.ttll.GnomeScreenshot',
+        },
+        {
+            type: 'indicator',
+            name: 'openweatherMenu',
+        },
+        {
+            type: 'indicator',
+            name: 'openweatherMenu',
+        },
+        {
+            type: 'indicator',
+            name: 'dateMenu',
+        },
     ],
     'aggregateMenu-menu': [
-        '_separator:Luminosité',
-        'brightness',
-        '_separator',
-        '_separator:Volume',
-        'volume',
-        '_separator',
-        '_separator:Connexions',
-        'network',
-        'bluetooth',
-        'location',
-        'rfkill',
-        '_separator',
-        '_separator:Appareils',
-        'drive-menu',
-        'gsconnect',
-        'remoteAccess',
-        'printers',
-        '_separator',
-        '_separator:Outils',
-        'clipboardIndicator',
-        'keyboard',
-        'a11y',
-        '_separator',
-        '_separator:Paramètres',
-        'power',
-        'nightLight',
-        'system',
+        {
+            type: 'separator',
+            'text': 'Luminosité',
+        },
+        {
+            type: 'indicator',
+            name: 'brightness',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            type: 'separator',
+            'text': 'Volume',
+        },
+        {
+            type: 'indicator',
+            name: 'volume',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            type: 'separator',
+            'text': 'Connexions',
+        },
+        {
+            type: 'indicator',
+            name: 'network',
+        },
+        {
+            type: 'indicator',
+            name: 'bluetooth',
+        },
+        {
+            type: 'indicator',
+            name: 'location',
+        },
+        {
+            type: 'indicator',
+            name: 'rfkill',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            type: 'separator',
+            'text': 'Appareils',
+        },
+        {
+            type: 'indicator',
+            name: 'drive-menu',
+            text: 'Disques connectés',
+        },
+        {
+            type: 'indicator',
+            name: 'gsconnect',
+        },
+        {
+            type: 'indicator',
+            name: 'remoteAccess',
+        },
+        {
+            type: 'indicator',
+            name: 'printers',
+            text: 'Imprimantes',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            type: 'separator',
+            'text': 'Outils',
+        },
+        {
+            type: 'indicator',
+            name: 'clipboardIndicator',
+        },
+        {
+            type: 'indicator',
+            name: 'keyboard',
+            text: 'Langue',
+            icon: 'format-text-bold',
+        },
+        {
+            type: 'indicator',
+            name: 'a11y',
+            text: 'Accessibilité',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            type: 'separator',
+            'text': 'Paramètres',
+        },
+        {
+            type: 'indicator',
+            name: 'power',
+        },
+        {
+            type: 'indicator',
+            name: 'nightLight',
+        },
+        {
+            type: 'indicator',
+            name: 'system',
+        },
     ],
     'aggregateMenu-status': [
-        // 'power',
-        'gsconnect',
-        'remoteAccess',
-        'thunderbolt',
-        'location',
-        'nightLight',
-        'network',
-        'bluetooth',
-        'rfkill',
-        'volume',
-    ],
-    'menu-menu': [
-        'power',
-    ],
-    'menu-stauts': [
-        'power',
+        {
+            type: 'indicator',
+            name: 'brightness',
+        },
+        {
+            type: 'indicator',
+            name: 'volume',
+        },
+        {
+            type: 'indicator',
+            name: 'network',
+        },
+        {
+            type: 'indicator',
+            name: 'bluetooth',
+        },
+        {
+            type: 'indicator',
+            name: 'location',
+        },
+        {
+            type: 'indicator',
+            name: 'rfkill',
+        },
+        {
+            type: 'indicator',
+            name: 'drive-menu',
+        },
+        {
+            type: 'indicator',
+            name: 'gsconnect',
+        },
+        {
+            type: 'indicator',
+            name: 'remoteAccess',
+        },
+        {
+            type: 'indicator',
+            name: 'printers',
+        },
+        {
+            type: 'indicator',
+            name: 'clipboardIndicator',
+            text: 'Clipboard',
+        },
+        {
+            type: 'indicator',
+            name: 'keyboard',
+        },
+        {
+            type: 'indicator',
+            name: 'a11y',
+        },
+        {
+            type: 'indicator',
+            name: 'power',
+        },
+        {
+            type: 'indicator',
+            name: 'nightLight',
+        },
+        {
+            type: 'indicator',
+            name: 'system',
+        },
     ],
 };
 
@@ -90,16 +254,16 @@ var BarManager = class {
             this.defaultAddToStatusArea.bind(Main.panel)(role, indicator, position, box);
             this.indicatorManager.setIndicator(role, indicator);
 
-            this.applyPrefs();
+            this.applyPrefs(BAR_PREFS);
         };
      
-        this.applyPrefs();
+        this.applyPrefs(BAR_PREFS);
     }
 
     destroy() {
         Main.panel.addToStatusArea = this.defaultAddToStatusArea;
 
-        this.setPanel(this.defaultBar);
+        this.applyPrefs(this.defaultBar);
     }
 
     resolveDefaultBar() {
@@ -128,7 +292,7 @@ var BarManager = class {
         this.boxManager.cleanBoxes();
     }
 
-    setPanel(prefs) {        
+    applyPrefs(prefs) {
         this.cleanBoxes();
 
         const boxes = this.boxManager.getBoxes();
@@ -138,30 +302,28 @@ var BarManager = class {
             let position = 0;
 
             for (const subKey in boxPrefs) {
-                const name = boxPrefs[subKey];
+                const params = boxPrefs[subKey];
 
-                if (name.startsWith('_')) {
-                    const [_, type, args_list] = name.match(/^_([a-zA-Z_-]*):?(.*)$/)
-                    const args = args_list.split(',')
-
-                    if (type === 'separator') {
-                        box.insert_child_at_index(new PopupMenu.PopupSeparatorMenuItem(args[0]), position++)
-                    }
-
-                    continue;
-                }
-
-                const indicator = this.indicatorManager.getIndicator(name);
-                if (!indicator) continue;
-    
-                indicator.applyPrefs();
-                
-                position += indicator.insertIntoBox(box, position);
+                position += this.handleBox(box, { ...params, position });                
             }
         }
     }
 
-    applyPrefs() {
-        this.setPanel(BAR_PREFS);
+    handleBox(box, { type, ...params }) {
+        switch (type) {
+            case 'indicator':
+                return this.indicatorManager.addIndicatorToBox(box, params);
+
+            case 'menu':
+                return this.boxManager.addMenuToBox(box, params);
+
+            case 'layout':
+                return this.boxManager.addLayoutToBox(box, params);
+
+            case 'separator':
+                box.insert_child_at_index(new PopupMenu.PopupSeparatorMenuItem(params.text), params.position);
+
+                return 1;
+        }
     }
 };
