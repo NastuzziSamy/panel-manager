@@ -90,28 +90,6 @@ var IndicatorHandler = class {
             }
         }
     }
-
-    insertIntoBox(box, position, prefs) {
-        this.applyPrefs(prefs);
-
-        if (box === Main.panel.statusArea.aggregateMenu._indicators) {
-            box.insert_child_at_index(this.getStatus(), position);
-        } else if (box === Main.panel.statusArea.aggregateMenu.menu.box) {
-            Main.panel.statusArea.aggregateMenu.menu.addMenuItem(this.getStatus().menu, position);
-        } else if (this.getIndicator() instanceof PanelMenu.Button) {
-            if (this.getIndicator().container.get_children().length === 0) {
-                box.add_child(this.getIndicator());
-            } else {
-                Main.panel._addToPanelBox(this.name, this.getIndicator(), position, box);
-            }
-        } else if (this.getIndicator() instanceof ButtonIndicator) {
-            box.insert_child_at_index(this.getIndicator().proxied, position);
-        } else {
-            return 0;
-        }
-
-        return 1;
-    }
 };
 
 var AppIndicatorHandler = class extends IndicatorHandler {

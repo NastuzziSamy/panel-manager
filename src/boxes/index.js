@@ -6,7 +6,7 @@ const PanelMenu = imports.ui.panelMenu;
 var AggregateMenu = GObject.registerClass(
     class AggregateMenu extends PanelMenu.Button {
         _init(name) {
-            super._init(0.5, name, false);
+            super._init(0.0, name, false);
             this.menu.actor.add_style_class_name('aggregate-menu');
             this.menu.actor.add_style_class_name(name);
     

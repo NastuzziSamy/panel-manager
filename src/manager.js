@@ -12,9 +12,9 @@ const { BoxManager } = Me.imports.src.boxes.manager;
 const BAR_PREFS = {
     left: [
         {
-            type: 'box',
+            type: 'menu',
             name: 'aggregateMenu',
-            menuAlignement: 1,
+            menuAlignement: 0,
         },
         {
             type: 'indicator',
@@ -57,11 +57,16 @@ const BAR_PREFS = {
             type: 'indicator',
             name: 'dateMenu',
         },
+        {
+            type: 'menu',
+            name: 'menu-0',
+            menuAlignement: 1,
+        },
     ],
-    'aggregateMenu-menu': [
+    aggregateMenu: [
         {
             type: 'separator',
-            'text': 'Luminosité',
+            text: 'Luminosité',
         },
         {
             type: 'indicator',
@@ -72,7 +77,7 @@ const BAR_PREFS = {
         },
         {
             type: 'separator',
-            'text': 'Volume',
+            text: 'Volume',
         },
         {
             type: 'indicator',
@@ -83,7 +88,7 @@ const BAR_PREFS = {
         },
         {
             type: 'separator',
-            'text': 'Connexions',
+            text: 'Connexions',
         },
         {
             type: 'indicator',
@@ -106,7 +111,7 @@ const BAR_PREFS = {
         },
         {
             type: 'separator',
-            'text': 'Appareils',
+            text: 'Appareils',
         },
         {
             type: 'indicator',
@@ -131,7 +136,7 @@ const BAR_PREFS = {
         },
         {
             type: 'separator',
-            'text': 'Outils',
+            text: 'Outils',
         },
         {
             type: 'indicator',
@@ -148,83 +153,22 @@ const BAR_PREFS = {
             name: 'a11y',
             text: 'Accessibilité',
         },
-        {
-            type: 'separator',
-        },
-        {
-            type: 'separator',
-            'text': 'Paramètres',
-        },
-        {
-            type: 'indicator',
-            name: 'power',
-        },
-        {
-            type: 'indicator',
-            name: 'nightLight',
-        },
-        {
-            type: 'indicator',
-            name: 'system',
-        },
     ],
-    'aggregateMenu-status': [
+    'menu-0': [
         {
-            type: 'indicator',
-            name: 'brightness',
-        },
-        {
-            type: 'indicator',
-            name: 'volume',
-        },
-        {
-            type: 'indicator',
-            name: 'network',
-        },
-        {
-            type: 'indicator',
-            name: 'bluetooth',
-        },
-        {
-            type: 'indicator',
-            name: 'location',
-        },
-        {
-            type: 'indicator',
-            name: 'rfkill',
-        },
-        {
-            type: 'indicator',
-            name: 'drive-menu',
-        },
-        {
-            type: 'indicator',
-            name: 'gsconnect',
-        },
-        {
-            type: 'indicator',
-            name: 'remoteAccess',
-        },
-        {
-            type: 'indicator',
-            name: 'printers',
-        },
-        {
-            type: 'indicator',
-            name: 'clipboardIndicator',
-            text: 'Clipboard',
-        },
-        {
-            type: 'indicator',
-            name: 'keyboard',
-        },
-        {
-            type: 'indicator',
-            name: 'a11y',
+            type: 'separator',
+            text: 'Batterie',
         },
         {
             type: 'indicator',
             name: 'power',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            type: 'separator',
+            text: 'Paramètres',
         },
         {
             type: 'indicator',
@@ -292,32 +236,36 @@ var BarManager = class {
     applyPrefs(prefs) {
         this.cleanBoxes();
 
-        const boxes = this.boxManager.getBoxes();
-        for (const key in boxes) {
-            const box = boxes[key];
-            const boxPrefs = prefs[key] || {};
+        const handlers = this.boxManager.getHandlers();
+        for (const key in handlers) {
+            const handler = handlers[key];
+            const handlerPrefs = prefs[key] || {};
             let position = 0;
 
-            for (const subKey in boxPrefs) {
-                const params = boxPrefs[subKey];
+            for (const subKey in handlerPrefs) {
+                const params = handlerPrefs[subKey];
 
-                position += this.handleBox(box, { ...params, position });                
+                position += this.handleBox(handler, { ...params, position });                
             }
         }
     }
 
-    handleBox(box, { type, ...params }) {
+    handleBox(handler, { type, name, ...params }) {
         switch (type) {
             case 'indicator':
-                return this.indicatorManager.addToBox(box, params);
+                return handler.addIndicator(this.indicatorManager.getIndicator(name), params);
 
-            case 'box':
-                return this.boxManager.addToBox(box, params);
+            case 'menu':
+                return handler.addMenu(this.boxManager.getMenu(name), params);
+
+            case 'layout':
+                return handler.addLayout(this.boxManager.getLayout(name), params);
+
+            case 'space':
+                return handler.addSpace(params);
 
             case 'separator':
-                box.insert_child_at_index(new PopupMenu.PopupSeparatorMenuItem(params.text), params.position);
-
-                return 1;
+                return handler.addSeparator(params);
         }
     }
 };

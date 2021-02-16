@@ -19,6 +19,7 @@ var BoxManager = class {
             center: Main.panel._centerBox,
             right: Main.panel._rightBox,
             aggregateMenu: Main.panel.statusArea.aggregateMenu,
+            'menu-0': new AggregateMenu('menu-0'),
         };
 
         for (const name in boxes) {
@@ -71,17 +72,10 @@ var BoxManager = class {
     }
 
     getBoxes() {
-        const boxes = Object.assign({});
-
-        for (const key in this.layouts) {
-            Object.assign(boxes, this.layouts[key].getBoxes());
-        }
-
-        for (const key in this.menus) {
-            Object.assign(boxes, this.menus[key].getBoxes());
-        }
-
-        return boxes;
+        return [].concat(
+            ...Object.values(this.layouts).map(layout => layout.getBoxes()),
+            ...Object.values(this.menus).map(menu => menu.getBoxes()),
+        );
     }
 
     cleanBoxes() {
