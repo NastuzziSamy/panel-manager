@@ -17,6 +17,12 @@ const BAR_PREFS = {
             menuAlignement: 0,
         },
         {
+            type: 'menu',
+            name: 'menu-0',
+            menuAlignement: 0,
+            width: 350,
+        },
+        {
             type: 'indicator',
             name: 'wm-bar',
         },
@@ -59,8 +65,9 @@ const BAR_PREFS = {
         },
         {
             type: 'menu',
-            name: 'menu-0',
+            name: 'menu-1',
             menuAlignement: 1,
+            width: 300,
         },
     ],
     aggregateMenu: [
@@ -86,6 +93,27 @@ const BAR_PREFS = {
         {
             type: 'separator',
         },
+        {
+            type: 'separator',
+            text: 'Outils',
+        },
+        {
+            type: 'indicator',
+            name: 'clipboardIndicator',
+        },
+        {
+            type: 'indicator',
+            name: 'keyboard',
+            text: 'Langue',
+            icon: 'format-text-bold',
+        },
+        {
+            type: 'indicator',
+            name: 'a11y',
+            text: 'Accessibilité',
+        },
+    ],
+    'menu-0': [
         {
             type: 'separator',
             text: 'Connexions',
@@ -131,30 +159,8 @@ const BAR_PREFS = {
             name: 'printers',
             text: 'Imprimantes',
         },
-        {
-            type: 'separator',
-        },
-        {
-            type: 'separator',
-            text: 'Outils',
-        },
-        {
-            type: 'indicator',
-            name: 'clipboardIndicator',
-        },
-        {
-            type: 'indicator',
-            name: 'keyboard',
-            text: 'Langue',
-            icon: 'format-text-bold',
-        },
-        {
-            type: 'indicator',
-            name: 'a11y',
-            text: 'Accessibilité',
-        },
     ],
-    'menu-0': [
+    'menu-1': [
         {
             type: 'separator',
             text: 'Batterie',

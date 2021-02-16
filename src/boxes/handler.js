@@ -125,6 +125,10 @@ var MenuHandler = class extends BoxHandler {
         if (prefs.menuAlignement !== undefined) {
             this.box.menu.setSourceAlignment(prefs.menuAlignement);
         }
+
+        if (prefs.width !== undefined) {
+            this.box.menu.box.width = prefs.width;
+        }
     }
 
     addIndicator(indicator, { position, ...prefs }={}) {

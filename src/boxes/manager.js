@@ -20,6 +20,7 @@ var BoxManager = class {
             right: Main.panel._rightBox,
             aggregateMenu: Main.panel.statusArea.aggregateMenu,
             'menu-0': new AggregateMenu('menu-0'),
+            'menu-1': new AggregateMenu('menu-1'),
         };
 
         for (const name in boxes) {
