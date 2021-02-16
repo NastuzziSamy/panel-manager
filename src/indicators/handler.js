@@ -25,12 +25,6 @@ const INDICATOR_PREFS = {
     'a11y': {
         text: 'Accessibilité',
     },
-    'aggregateMenu': {
-        menuAlignement: 1,
-    },
-    'DoNotDisturbRole': {
-        menuAlignement: 0,
-    },
 }
 
 

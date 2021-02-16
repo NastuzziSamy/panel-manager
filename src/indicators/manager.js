@@ -5,8 +5,9 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
 const { IndicatorHandler, AppIndicatorHandler } = Me.imports.src.indicators.handler;
+const { AggregateMenu } = Me.imports.src.boxes.index;
 
-const INDICATOR_DEFAULT_NAME = 'no-name-';
+const INDICATOR_DEFAULT_NAME = 'indicator-';
 
 
 var IndicatorManager = class {
@@ -52,27 +53,30 @@ var IndicatorManager = class {
         }
     }
 
-    resolveIndicators(boxes) {
-        const menu = Main.panel.statusArea.aggregateMenu;
-        const menuKeys = Object.keys(menu);
-        for (const index in menuKeys) {
-            const key = menuKeys[index];
-            const [, name] = key.match(/^_([a-zA-Z]*)$/) || [];
-            if (!name || name === 'delegate' || name === 'indicators') continue;
-
-            const child = menu[key];
-            let indicator = this.resolveElement(child);
-            if (!indicator) continue;
-
-            this.setIndicator(name, indicator);
-        }
-        
+    resolveIndicators(menus, boxes) {
         for (const key in Main.panel.statusArea) {
             this.setIndicator(key, Main.panel.statusArea[key]);
         }
 
+        for (const key in menus) {
+            const menu = menus[key];
+            const menuKeys = Object.keys(menu);
+
+            for (const index in menuKeys) {
+                const varName = menuKeys[index];
+                const [, name] = varName.match(/^_([a-zA-Z]*)$/) || [];
+                if (!name || name === 'delegate' || name === 'indicators') continue;
+    
+                const child = menu[varName];
+                let indicator = this.resolveElement(child);
+                if (!indicator) continue;
+    
+                this.setIndicator(name, indicator);
+            }
+        }
+
         for (const key in boxes) {
-            if (key === 'menu') continue;
+            if (key.endsWith('-menu')) continue;
 
             const box = boxes[key];
             const children = box.get_children();
@@ -86,6 +90,18 @@ var IndicatorManager = class {
                 this.addIndicator(indicator);
             }
         }
+    }
+
+    validElement(element) {
+        if (element instanceof PanelMenu.SystemIndicator) {
+            return true;
+        }
+         
+        if (element instanceof PanelMenu.Button || element instanceof St.BoxLayout) {
+            return (element !== Main.panel.statusArea.aggregateMenu) && !(element instanceof AggregateMenu);
+        }
+
+        return false;
     }
 
     hasElement(element) {
@@ -119,8 +135,8 @@ var IndicatorManager = class {
     }
 
     setIndicator(name, element) {
-        if (this.hasElement(element)) return;
-
+        if (!this.validElement(element) || this.hasElement(element)) return;
+        
         if (this.hasIndicator(name)) {
             this.getIndicator(name).addElement(element);
 
@@ -136,7 +152,7 @@ var IndicatorManager = class {
     }
 
     addIndicator(element) {
-        if (this.hasElement(element)) return;
+        if (!this.validElement(element) || this.hasElement(element)) return;
 
         const name = INDICATOR_DEFAULT_NAME + (this.compatibilityNumber++);
         const indicator = new IndicatorHandler(name);

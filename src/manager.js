@@ -6,9 +6,8 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
 const { IndicatorManager } = Me.imports.src.indicators.manager;
+const { BoxManager } = Me.imports.src.boxes.manager;
 
-const LAYOUT_COMPATIBILITY = 'no-name-';
-let compatibilityNumber = 0;
 
 const BAR_PREFS = {
     left: [
@@ -17,7 +16,7 @@ const BAR_PREFS = {
     ],
     center: [
         'appMenu',
-        'no-name-0',
+        'indicator-0',
     ],
     right: [
         'app-indicators',
@@ -26,8 +25,9 @@ const BAR_PREFS = {
         'de.ttll.GnomeScreenshot',
         'openweatherMenu',
         'dateMenu',
+        'menu',
     ],
-    menu: [
+    'aggregateMenu-menu': [
         '_separator:Luminosité',
         'brightness',
         '_separator',
@@ -56,8 +56,8 @@ const BAR_PREFS = {
         'nightLight',
         'system',
     ],
-    status: [
-        'power',
+    'aggregateMenu-status': [
+        // 'power',
         'gsconnect',
         'remoteAccess',
         'thunderbolt',
@@ -68,21 +68,20 @@ const BAR_PREFS = {
         'rfkill',
         'volume',
     ],
+    'menu-menu': [
+        'power',
+    ],
+    'menu-stauts': [
+        'power',
+    ],
 };
 
 
 var BarManager = class {
     constructor() {
         this.indicatorManager = new IndicatorManager;
+        this.boxManager = new BoxManager;
         this.defaultBar = {};
-
-        this.boxes = {
-            left: Main.panel._leftBox,
-            center: Main.panel._centerBox,
-            right: Main.panel._rightBox,
-            menu: Main.panel.statusArea.aggregateMenu.menu.box,
-            status: Main.panel.statusArea.aggregateMenu._indicators,
-        }
 
         this.resolveDefaultBar();
 
@@ -104,10 +103,11 @@ var BarManager = class {
     }
 
     resolveDefaultBar() {
-        this.indicatorManager.resolveIndicators(this.boxes);
+        const boxes = this.boxManager.getBoxes();
+        this.indicatorManager.resolveIndicators(boxes);
         
-        for (const key in this.boxes) {
-            const box = this.boxes[key];
+        for (const key in boxes) {
+            const box = boxes[key];
             const children = box.get_children();
             this.defaultBar[key] = [];
 
@@ -124,20 +124,16 @@ var BarManager = class {
     }
 
     cleanBoxes() {
-        this.indicatorManager.resolveIndicators(this.boxes);
-
-        for (const key in this.boxes) {
-            const box = this.boxes[key];
-
-            box.remove_all_children();
-        }
+        this.indicatorManager.resolveIndicators(this.boxManager.menus, this.boxManager.getBoxes());
+        this.boxManager.cleanBoxes();
     }
 
-    setPanel(prefs) {
+    setPanel(prefs) {        
         this.cleanBoxes();
 
-        for (const key in this.boxes) {
-            const box = this.boxes[key];
+        const boxes = this.boxManager.getBoxes();
+        for (const key in boxes) {
+            const box = boxes[key];
             const boxPrefs = prefs[key] || {};
             let position = 0;
 
