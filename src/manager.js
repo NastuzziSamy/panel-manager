@@ -17,12 +17,6 @@ const BAR_PREFS = {
             menuAlignement: 0,
         },
         {
-            type: 'menu',
-            name: 'menu-0',
-            menuAlignement: 0,
-            width: 350,
-        },
-        {
             type: 'indicator',
             name: 'wm-bar',
         },
@@ -38,6 +32,12 @@ const BAR_PREFS = {
         },
     ],
     right: [
+        {
+            type: 'menu',
+            name: 'menu-0',
+            menuAlignement: 0,
+            width: 350,
+        },
         {
             type: 'indicator',
             name: 'app-indicators',
@@ -55,6 +55,10 @@ const BAR_PREFS = {
             type: 'indicator',
             name: 'de.ttll.GnomeScreenshot',
         },
+,        {
+            type: 'indicator',
+            name: 'clipboardIndicator',
+        },
         {
             type: 'indicator',
             name: 'openweatherMenu',
@@ -70,7 +74,7 @@ const BAR_PREFS = {
             width: 300,
         },
     ],
-    aggregateMenu: [
+    'aggregateMenu': [
         {
             type: 'separator',
             text: 'Luminosité',
@@ -89,28 +93,6 @@ const BAR_PREFS = {
         {
             type: 'indicator',
             name: 'volume',
-        },
-        {
-            type: 'separator',
-        },
-        {
-            type: 'separator',
-            text: 'Outils',
-        },
-        {
-            type: 'indicator',
-            name: 'clipboardIndicator',
-        },
-        {
-            type: 'indicator',
-            name: 'keyboard',
-            text: 'Langue',
-            icon: 'format-text-bold',
-        },
-        {
-            type: 'indicator',
-            name: 'a11y',
-            text: 'Accessibilité',
         },
     ],
     'menu-0': [
@@ -168,6 +150,26 @@ const BAR_PREFS = {
         {
             type: 'indicator',
             name: 'power',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            type: 'separator',
+            text: 'Outils',
+        },
+        {
+            type: 'indicator',
+            name: 'keyboard',
+            text: 'Langue',
+            icon: 'format-text-bold',
+            noStatus: true,
+        },
+        {
+            type: 'indicator',
+            name: 'a11y',
+            text: 'Accessibilité',
+            noStatus: true,
         },
         {
             type: 'separator',

@@ -29,6 +29,10 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
 
         this.proxied = indicator;
         this.subMenu = new PopupMenu.PopupSubMenuMenuItem('', true);
+        this.iconIndicator = this._addIndicator();
+        this.iconIndicator.add_style_class_name('system-status-icon');
+        this.isShown = true;
+        this.noStatus = false;
         
         this.connectSignals();
         this.insertPanelLayout();
@@ -53,12 +57,39 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
     }
 
     hide() {
+        this.isShown = false;
         this.subMenu._setOpenState(false);
+        this.iconIndicator.hide();
         this.subMenu.hide();
     }
 
     show() {
+        this.isShown = true;
+
+        if (!this.noStatus) {
+            this.iconIndicator.show();
+        }
+
         this.subMenu.show();
+    }
+
+    applyPrefs({ text, icon, noStatus=false }) {
+        if (text) {
+            this.subMenu.label.text = text;
+        }
+        
+        if (icon) {
+            this.subMenu.icon.icon_name = icon;
+            this.iconIndicator.icon_name = icon;
+        }
+
+        this.noStatus = noStatus;
+
+        if (this.noStatus) {
+            this.iconIndicator.hide();
+        } else if (this.isShown) {
+            this.iconIndicator.show();
+        }
     }
 
     insertPanelLayout() {
@@ -71,8 +102,10 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
             if (subChildren[0] instanceof St.Icon) {
                 if (!this.subMenu.icon.icon_name) {
                     this.subMenu.icon.icon_name = subChildren[0].icon_name;
+                    this.iconIndicator.icon_name = subChildren[0].icon_name;
 
                     subChildren[0].bind_property('icon_name', this.subMenu.icon, 'icon_name', 0);
+                    subChildren[0].bind_property('icon_name', this.iconIndicator, 'icon_name', 0);
                 }
 
                 if (subChildren.length === 1) {

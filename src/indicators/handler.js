@@ -79,15 +79,9 @@ var IndicatorHandler = class {
         return this.elements.indicator;
     }
 
-    applyPrefs({ text, icon }) {
+    applyPrefs(prefs) {
         if (this.elements.status instanceof IndicatorToStatus) {
-            if (text) {
-                this.elements.status.subMenu.label.text = text;
-            }
-            
-            if (icon) {
-                this.elements.status.subMenu.icon.icon_name = icon;
-            }
+            this.elements.status.applyPrefs(prefs);
         }
     }
 };
