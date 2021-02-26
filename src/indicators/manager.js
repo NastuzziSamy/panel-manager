@@ -41,12 +41,12 @@ var IndicatorManager = class {
         }
 
         while (child) {
-            if (child instanceof PanelMenu.SystemIndicator 
-                || child instanceof PanelMenu.Button 
+            if (child instanceof PanelMenu.SystemIndicator
+                || child instanceof PanelMenu.Button
                 || child instanceof St.BoxLayout) {
                 return child;
             }
-    
+
             child = child.get_child_at_index ? child.get_child_at_index(0) : null;
         }
     }
@@ -64,18 +64,17 @@ var IndicatorManager = class {
                 const varName = menuKeys[index];
                 const [, name] = varName.match(/^_([a-zA-Z]*)$/) || [];
                 if (!name || name === 'delegate' || name === 'indicators') continue;
-    
+
                 const child = menu[varName];
                 let indicator = this.resolveElement(child);
                 if (!indicator) continue;
-    
+
                 this.setIndicator(name, indicator);
             }
         }
 
         for (const key in boxes) {
-            if (key.endsWith('-menu')) continue;
-
+            if (key.endsWith(':menu')) continue;
             const box = boxes[key];
             const children = box.get_children();
 
@@ -84,7 +83,7 @@ var IndicatorManager = class {
 
                 let indicator = this.resolveElement(child);
                 if (!indicator) continue;
-                
+
                 this.addIndicator(indicator);
             }
         }
@@ -94,7 +93,7 @@ var IndicatorManager = class {
         if (element instanceof PanelMenu.SystemIndicator) {
             return true;
         }
-         
+
         if (element instanceof PanelMenu.Button || element instanceof St.BoxLayout) {
             return (element !== Main.panel.statusArea.aggregateMenu) && !(element instanceof AggregateMenu);
         }
@@ -134,7 +133,7 @@ var IndicatorManager = class {
 
     setIndicator(name, element) {
         if (!this.validElement(element) || this.hasElement(element)) return;
-        
+
         if (this.hasIndicator(name)) {
             this.getIndicator(name).addElement(element);
 

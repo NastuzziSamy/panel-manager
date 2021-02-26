@@ -45,7 +45,9 @@ var BoxHandler = class {
 
 var LayoutHandler = class extends BoxHandler {
     getBoxes() {
-        return [this.box];
+        return {
+            [this.name]: this.box,
+        };
     }
 
     addIndicator(indicator, { position, ...prefs }={}) {
@@ -115,10 +117,10 @@ var MenuHandler = class extends BoxHandler {
     }
     
     getBoxes() {
-        return [
-            this.box.menu.box,
-            this.box._indicators,
-        ];
+        return {
+            [this.name + ':menu']: this.box.menu.box,
+            [this.name + ':status']: this.box._indicators,
+        };
     }
 
     applyPrefs(prefs) {

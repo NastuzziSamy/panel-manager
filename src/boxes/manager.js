@@ -73,7 +73,7 @@ var BoxManager = class {
     }
 
     getBoxes() {
-        return [].concat(
+        return Object.assign({}, 
             ...Object.values(this.layouts).map(layout => layout.getBoxes()),
             ...Object.values(this.menus).map(menu => menu.getBoxes()),
         );

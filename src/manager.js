@@ -65,6 +65,10 @@ const BAR_PREFS = {
         },
         {
             type: 'indicator',
+            name: 'notifications'
+        }
+        {
+            type: 'indicator',
             name: 'dateMenu',
         },
         {
@@ -205,7 +209,7 @@ var BarManager = class {
 
             this.applyPrefs(BAR_PREFS);
         };
-     
+
         this.applyPrefs(BAR_PREFS);
     }
 
@@ -218,7 +222,7 @@ var BarManager = class {
     resolveDefaultBar() {
         const boxes = this.boxManager.getBoxes();
         this.indicatorManager.resolveIndicators(this.boxManager.getMenus(), boxes);
-        
+
         for (const key in boxes) {
             const box = boxes[key];
             const children = box.get_children();
@@ -233,7 +237,7 @@ var BarManager = class {
 
                 this.defaultBar[key][position] = indicator.name;
             }
-        } 
+        }
     }
 
     cleanBoxes() {
@@ -253,7 +257,7 @@ var BarManager = class {
             for (const subKey in handlerPrefs) {
                 const params = handlerPrefs[subKey];
 
-                position += this.handleBox(handler, { ...params, position });                
+                position += this.handleBox(handler, { ...params, position });
             }
         }
     }
