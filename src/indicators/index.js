@@ -33,7 +33,7 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         this.iconIndicator.add_style_class_name('system-status-icon');
         this.isShown = true;
         this.noStatus = false;
-        
+
         this.connectSignals();
         this.insertPanelLayout();
         this.cloneMenuBox();
@@ -77,7 +77,7 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         if (text) {
             this.subMenu.label.text = text;
         }
-        
+
         if (icon) {
             this.subMenu.icon.icon_name = icon;
             this.iconIndicator.icon_name = icon;
@@ -118,7 +118,7 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
 
         for (const key in children) {
             const child = children[key];
-            
+
             if (child instanceof St.BoxLayout) {
                 const arrowChild = child.get_last_child();
 
@@ -131,7 +131,7 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         }
     }
 
-    cloneMenuBox() {        
+    cloneMenuBox() {
         this.subMenu.menu.box.remove_all_children();
 
         const items = this.proxied.menu.box.get_children();

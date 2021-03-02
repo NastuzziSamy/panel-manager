@@ -5,6 +5,7 @@ const PopupMenu = imports.ui.popupMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { ButtonIndicator } = Me.imports.src.indicators.index;
+const { LayoutSpace } = Me.imports.src.elements;
 
 
 var BoxHandler = class {
@@ -24,7 +25,7 @@ var BoxHandler = class {
     addIndicator(indicator, { position, ...prefs }={}) {
         throw 'Not implemented';
     }
-    
+
     addLayout(layout, { position, ...prefs }={}) {
         throw 'Not implemented';
     }
@@ -72,7 +73,7 @@ var LayoutHandler = class extends BoxHandler {
 
         return 1;
     }
-    
+
     addLayout(layout, { position, ...prefs }={}) {
         if (!layout) return 0;
         layout.applyPrefs(prefs);
@@ -82,12 +83,12 @@ var LayoutHandler = class extends BoxHandler {
         if (!element) return 0;
 
         box.insert_child_at_index(element, position);
-     
+
         return 1;
     }
-    
+
     addMenu(menu, { position, ...prefs }={}) {
-        if (!menu) return 0; 
+        if (!menu) return 0;
         menu.applyPrefs(prefs);
 
         const box = this.getBox();
@@ -95,13 +96,14 @@ var LayoutHandler = class extends BoxHandler {
         if (!element) return 0;
 
         Main.panel._addToPanelBox(menu.name, element, position, box);
-     
+
         return 1;
     }
 
-    addSpace(params={}) {
-        // TODO: In a future add a space.
-        return 0;
+    addSpace({ position, space=10 }={}) {
+        this.getBox().insert_child_at_index(new LayoutSpace(space), position);
+
+        return 1;
     }
 
     addSeparator() {
@@ -115,7 +117,7 @@ var MenuHandler = class extends BoxHandler {
     getIndicatorBox() {
         return this.box;
     }
-    
+
     getBoxes() {
         return {
             [this.name + ':menu']: this.box.menu.box,
@@ -128,8 +130,8 @@ var MenuHandler = class extends BoxHandler {
             this.box.menu.setSourceAlignment(prefs.menuAlignement);
         }
 
-        if (prefs.width !== undefined) {
-            this.box.menu.box.width = prefs.width;
+        if (prefs.menuWidth !== undefined) {
+            this.box.menu.box.width = prefs.menuWidth;
         }
     }
 
@@ -150,7 +152,7 @@ var MenuHandler = class extends BoxHandler {
     addLayout() {
         return 0;
     }
-    
+
     addMenu() {
         return 0;
     }

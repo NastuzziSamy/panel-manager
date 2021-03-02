@@ -10,6 +10,8 @@ var Extension = class {
     }
 
     disable() {
+        if (!global.managers) return;
+
         if (global.managers.bar) {
             global.managers.bar.destroy();
         }

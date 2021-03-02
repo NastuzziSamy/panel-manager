@@ -17,14 +17,21 @@ const BAR_PREFS = {
             menuAlignement: 0,
         },
         {
+            type: 'menu',
+            name: 'menu-0',
+            menuAlignement: 0,
+            menuWidth: 350,
+        },
+        {
             type: 'indicator',
-            name: 'wm-bar',
+            name: 'workspaces',
         },
     ],
     center: [
         {
             type: 'indicator',
             name: 'appMenu',
+            maxWidth: 650,
         },
         {
             type: 'indicator',
@@ -33,19 +40,21 @@ const BAR_PREFS = {
     ],
     right: [
         {
-            type: 'menu',
-            name: 'menu-0',
-            menuAlignement: 0,
-            width: 350,
-        },
-        {
             type: 'indicator',
             name: 'app-indicators',
             order: ['Slack1', 'discord1'],
         },
         {
+            type: 'space',
+            space: 25,
+        },
+        {
             type: 'indicator',
             name: 'lockkeys',
+        },
+        {
+            type: 'indicator',
+            name: '/org/gnome/Shell/Extensions/GSConnect/Device/de6fe4af05943228',
         },
         {
             type: 'indicator',
@@ -55,27 +64,39 @@ const BAR_PREFS = {
             type: 'indicator',
             name: 'de.ttll.GnomeScreenshot',
         },
-,        {
+        {
             type: 'indicator',
             name: 'clipboardIndicator',
+        },
+        {
+            type: 'space',
+            space: 25,
         },
         {
             type: 'indicator',
             name: 'openweatherMenu',
         },
         {
-            type: 'indicator',
-            name: 'notifications'
-        }
+            type: 'space',
+            space: 15,
+        },
         {
             type: 'indicator',
             name: 'dateMenu',
         },
         {
+            type: 'indicator',
+            name: 'NotificationCenter'
+        },
+        {
+            type: 'space',
+            space: 25,
+        },
+        {
             type: 'menu',
             name: 'menu-1',
             menuAlignement: 1,
-            width: 300,
+            menuWidth: 300,
         },
     ],
     'aggregateMenu': [

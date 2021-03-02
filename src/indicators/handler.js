@@ -1,9 +1,10 @@
-const { St } = imports.gi;
+const { St, Meta, GLib } = imports.gi;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
+const Helper = Me.imports.src.helper;
 
 // const INDICATOR_PREFS = {
 //     'app-indicators': {
@@ -56,7 +57,7 @@ var IndicatorHandler = class {
         }
 
         const toCompare = [
-            this.elements.indicator, this.elements.status, 
+            this.elements.indicator, this.elements.status,
             (this.elements.indicator || {}).proxied, (this.elements.status || {}).proxied,
         ];
 
@@ -80,6 +81,12 @@ var IndicatorHandler = class {
     }
 
     applyPrefs(prefs) {
+        if (prefs.maxWidth !== undefined && this.elements.indicator) {
+            const element = this.elements.indicator.container || this.elements.indicator;
+
+            Helper.addStyle(element, 'max-width', prefs.maxWidth + 'px');
+        }
+
         if (this.elements.status instanceof IndicatorToStatus) {
             this.elements.status.applyPrefs(prefs);
         }
@@ -95,7 +102,7 @@ var AppIndicatorHandler = class extends IndicatorHandler {
 
     addElement(element) {
         const [, name] = element.name.match(/^appindicator.*\/(.+)$/)
-        
+
         this.elements[name] = element;
     }
 

@@ -4,6 +4,7 @@ const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
+const { LayoutSpace } = Me.imports.src.elements;
 const { IndicatorHandler, AppIndicatorHandler } = Me.imports.src.indicators.handler;
 const { AggregateMenu } = Me.imports.src.boxes.index;
 
@@ -24,6 +25,8 @@ var IndicatorManager = class {
     }
 
     resolveElement(child) {
+        if (!this.validElement(child)) return;
+
         if (child instanceof St.BoxLayout && !(child instanceof PanelMenu.SystemIndicator)) {
             if (this.hasElement(child)) {
                 const indicator = this.findIndicator(child);
@@ -92,6 +95,10 @@ var IndicatorManager = class {
     validElement(element) {
         if (element instanceof PanelMenu.SystemIndicator) {
             return true;
+        }
+
+        if (element instanceof LayoutSpace) {
+            return false;
         }
 
         if (element instanceof PanelMenu.Button || element instanceof St.BoxLayout) {

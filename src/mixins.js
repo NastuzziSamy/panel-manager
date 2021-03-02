@@ -2,7 +2,11 @@ var SignalMixin = {
     signals: [],
 
     connectSignal(element, signal, callback) {
-        this.signals.push([element, element.connect(signal, callback)]);
+        const signalId = element.connect(signal, callback);
+
+        this.signals.push([element, signalId]);
+
+        return signalId;
     },
 
     disconnectSignals() {
@@ -39,12 +43,12 @@ var ProxyMixin = {
                 element[method] = callback;
             }
         }
-     
+
         this.proxies = [];
     }
 };
 
 
 var AggregateMenuMixin = {
-    
+
 }
