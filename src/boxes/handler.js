@@ -6,6 +6,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { ButtonIndicator } = Me.imports.src.indicators.index;
 const { LayoutSpace } = Me.imports.src.elements;
+const Helper = Me.imports.src.helper;
 
 
 var BoxHandler = class {
@@ -100,8 +101,11 @@ var LayoutHandler = class extends BoxHandler {
         return 1;
     }
 
-    addSpace({ position, space=10 }={}) {
-        this.getBox().insert_child_at_index(new LayoutSpace(space), position);
+    addSpace({ position, space=10, ...prefs }={}) {
+        const layout = new LayoutSpace(space);
+        layout.applyPrefs(prefs);
+
+        this.getBox().insert_child_at_index(layout, position);
 
         return 1;
     }
@@ -125,13 +129,21 @@ var MenuHandler = class extends BoxHandler {
         };
     }
 
-    applyPrefs(prefs) {
-        if (prefs.menuAlignement !== undefined) {
-            this.box.menu.setSourceAlignment(prefs.menuAlignement);
+    applyPrefs({ menuAlignement, menuWidth, menuStyle, style }) {
+        if (menuAlignement !== undefined) {
+            this.box.menu.setSourceAlignment(menuAlignement);
         }
 
-        if (prefs.menuWidth !== undefined) {
-            this.box.menu.box.width = prefs.menuWidth;
+        if (menuWidth !== undefined) {
+            this.box.menu.box.width = menuWidth;
+        }
+
+        if (menuStyle !== undefined) {
+            Helper.mergeStyle(this.box.menu.box, menuStyle);
+        }
+
+        if (style !== undefined) {
+            Helper.mergeStyle(this.box.first_child, style);
         }
     }
 

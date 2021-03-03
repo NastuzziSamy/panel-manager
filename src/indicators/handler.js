@@ -81,10 +81,14 @@ var IndicatorHandler = class {
     }
 
     applyPrefs(prefs) {
-        if (prefs.maxWidth !== undefined && this.elements.indicator) {
-            const element = this.elements.indicator.container || this.elements.indicator;
+        if (this.elements.indicator) {
+            if (prefs.style !== undefined) {
+                Helper.mergeStyle(this.elements.indicator.first_child, prefs.style);
+            }
 
-            Helper.addStyle(element, 'max-width', prefs.maxWidth + 'px');
+            if (prefs.menuStyle !== undefined) {
+                Helper.mergeStyle(this.elements.indicator.menu.box, prefs.menuStyle);
+            }
         }
 
         if (this.elements.status instanceof IndicatorToStatus) {

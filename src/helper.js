@@ -28,3 +28,10 @@ var addStyle = (element, key, value) => {
 
     element.style = parseStyle(style);
 };
+
+
+var mergeStyle = (element, style) => {
+    const mergedStyle = Object.assign(getStyle(element), style);
+
+    element.style = parseStyle(mergedStyle);
+}

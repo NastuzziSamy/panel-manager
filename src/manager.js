@@ -13,30 +13,52 @@ const BAR_PREFS = {
     left: [
         {
             type: 'menu',
-            name: 'aggregateMenu',
+            name: 'menu-1',
             menuAlignement: 0,
+            style: {
+                'padding-left': '7px',
+                'padding-right': '7px',
+                'background': 'rgba(228, 228, 228, 0.7)',
+                'color': 'black',
+                'border-radius': '25px',
+            },
+            menuStyle: {
+                'width': '350px',
+            },
+        },
+        {
+            type: 'indicator',
+            name: 'workspaces',
+        },
+        {
+            type: 'space',
+            space: 25,
         },
         {
             type: 'menu',
             name: 'menu-0',
             menuAlignement: 0,
-            menuWidth: 350,
-        },
-        {
-            type: 'indicator',
-            name: 'workspaces',
+            style: {
+                'padding-left': '7px',
+                'padding-right': '7px',
+            },
+            menuStyle: {
+                'width': '350px',
+            }
         },
     ],
     center: [
         {
             type: 'indicator',
             name: 'appMenu',
-            maxWidth: 650,
+            style: {
+                'max-width': '650px',
+            },
         },
-        {
-            type: 'indicator',
-            name: 'indicator-0',
-        },
+        // {
+        //     type: 'indicator',
+        //     name: 'indicator-0',
+        // },
     ],
     right: [
         {
@@ -47,10 +69,6 @@ const BAR_PREFS = {
         {
             type: 'space',
             space: 25,
-        },
-        {
-            type: 'indicator',
-            name: 'lockkeys',
         },
         {
             type: 'indicator',
@@ -82,42 +100,19 @@ const BAR_PREFS = {
         },
         {
             type: 'indicator',
+            name: 'NotificationCenter',
+        },
+        {
+            type: 'indicator',
             name: 'dateMenu',
-        },
-        {
-            type: 'indicator',
-            name: 'NotificationCenter'
-        },
-        {
-            type: 'space',
-            space: 25,
-        },
-        {
-            type: 'menu',
-            name: 'menu-1',
-            menuAlignement: 1,
-            menuWidth: 300,
-        },
-    ],
-    'aggregateMenu': [
-        {
-            type: 'separator',
-            text: 'Luminosité',
-        },
-        {
-            type: 'indicator',
-            name: 'brightness',
-        },
-        {
-            type: 'separator',
-        },
-        {
-            type: 'separator',
-            text: 'Volume',
-        },
-        {
-            type: 'indicator',
-            name: 'volume',
+            style: {
+                'padding-left': '7px',
+                'padding-right': '7px',
+                'font-size': '14px',
+                'background': 'rgba(228, 228, 228, 0.7)',
+                'color': 'black',
+                'border-radius': '25px',
+            },
         },
     ],
     'menu-0': [
@@ -170,11 +165,26 @@ const BAR_PREFS = {
     'menu-1': [
         {
             type: 'separator',
-            text: 'Batterie',
+            text: 'Energie',
+        },
+        {
+            type: 'indicator',
+            name: 'brightness',
         },
         {
             type: 'indicator',
             name: 'power',
+        },
+        {
+            type: 'separator',
+        },
+        {
+            type: 'separator',
+            text: 'Volume',
+        },
+        {
+            type: 'indicator',
+            name: 'volume',
         },
         {
             type: 'separator',
@@ -188,6 +198,13 @@ const BAR_PREFS = {
             name: 'keyboard',
             text: 'Langue',
             icon: 'format-text-bold',
+            noStatus: true,
+        },
+        {
+            type: 'indicator',
+            name: 'lockkeys',
+            text: 'Majuscules',
+            icon: 'input-keyboard',
             noStatus: true,
         },
         {
