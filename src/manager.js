@@ -265,7 +265,17 @@ var BarManager = class {
             this.applyPrefs(BAR_PREFS);
         });
 
-        // Main.panel.statusArea.aggregateMenu._indicators.replace_child = (...args) => this.applyPrefs(BAR_PREFS);
+        this.applyProxy(Main.panel.statusArea.aggregateMenu._indicators, 'replace_child', (proxied, old_child, new_child) => {
+            proxied(old_child, new_child);
+
+            const indicator = this.indicatorManager.findIndicator(old_child);
+            if (!indicator) return;
+
+            indicator.addElement(new_child);
+            Main.panel.statusArea.aggregateMenu[`_${indicator.name}`] = new_child;
+
+            this.applyPrefs(BAR_PREFS);
+        });
 
         this.applyPrefs(BAR_PREFS);
     }

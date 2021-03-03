@@ -6,33 +6,10 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
 const Helper = Me.imports.src.helper;
 
-// const INDICATOR_PREFS = {
-//     'app-indicators': {
-//         order: ['Slack1', 'discord1'],
-//     },
-//     'keyboard': {
-//         text: 'Langue',
-//         icon: 'format-text-bold',
-//     },
-//     'clipboardIndicator': {
-//         text: 'Clipboard',
-//     },
-//     'drive-menu': {
-//         text: 'Disques connectés',
-//     },
-//     'printers': {
-//         text: 'Imprimantes',
-//     },
-//     'a11y': {
-//         text: 'Accessibilité',
-//     },
-// }
-
 
 var IndicatorHandler = class {
     constructor(name) {
         this.name = name;
-        // this.prefs = INDICATOR_PREFS[name] || {};
 
         this.elements = {
             indicator: null,
