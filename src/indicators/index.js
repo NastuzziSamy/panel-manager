@@ -74,7 +74,7 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         this.subMenu.show();
     }
 
-    applyPrefs({ text, icon, style, statusStyle, menuStyle, noStatus=false }) {
+    applyPrefs({ text, icon, style, menuStyle, optionsStyle, noStatus=false }) {
         if (text) {
             this.subMenu.label.text = text;
         }
@@ -85,15 +85,15 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         }
 
         if (style !== undefined) {
-            Helper.mergeStyle(this.subMenu, style);
-        }
-
-        if (statusStyle !== undefined) {
-            Helper.mergeStyle(this.iconIndicator, statusStyle);
+            Helper.mergeStyle(this.iconIndicator, style);
         }
 
         if (menuStyle !== undefined) {
-            Helper.mergeStyle(this.subMenu.menu.box, menuStyle);
+            Helper.mergeStyle(this.subMenu, menuStyle);
+        }
+
+        if (optionsStyle !== undefined) {
+            Helper.mergeStyle(this.subMenu.menu.box, optionsStyle);
         }
 
         this.noStatus = noStatus;

@@ -70,6 +70,22 @@ var IndicatorHandler = class {
 
         if (this.elements.status instanceof IndicatorToStatus) {
             this.elements.status.applyPrefs(prefs);
+        } else if (this.elements.status) {
+            if (prefs.style !== undefined) {
+                Helper.mergeStyle(this.elements.status, prefs.style);
+            }
+
+            if (prefs.menuStyle !== undefined) {
+                Helper.mergeStyle(this.elements.status.menu, prefs.menuStyle);
+            }
+
+            if (prefs.optionsStyle !== undefined) {
+                const children = this.elements.status.menu.get_children();
+
+                for (const key in children) {
+                    Helper.mergeStyle(children[key].menu.box, prefs.optionsStyle);
+                }
+            }
         }
     }
 };

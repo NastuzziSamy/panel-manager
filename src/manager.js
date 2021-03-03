@@ -30,7 +30,6 @@ const BAR_PREFS = {
             },
             menuStyle: {
                 'width': '350px',
-                'color': 'black',
             },
         },
         {
@@ -177,6 +176,9 @@ const BAR_PREFS = {
         {
             type: 'indicator',
             name: 'power',
+            style: {
+                'font-size': '16px',
+            },
         },
         {
             type: 'separator',
@@ -209,7 +211,7 @@ const BAR_PREFS = {
             text: 'Majuscules',
             icon: 'input-keyboard',
             noStatus: true,
-            menuStyle: {
+            optionsStyle: {
                 'color': 'black',
             },
         },
