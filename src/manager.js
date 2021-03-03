@@ -283,9 +283,9 @@ var BarManager = class {
     }
 
     destroy() {
-        Main.panel.addToStatusArea = this.defaultAddToStatusArea;
-
         this.applyPrefs(this.defaultBar);
+
+        this.restoreProxies();
     }
 
     resolveDefaultBar() {
