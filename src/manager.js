@@ -7,6 +7,12 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
 const { IndicatorManager } = Me.imports.src.indicators.manager;
 const { BoxManager } = Me.imports.src.boxes.manager;
+const { ProxyMixin } = Me.imports.src.mixins;
+
+
+const KNOWN_INDICATORS = [
+
+];
 
 
 const BAR_PREFS = {
@@ -18,12 +24,13 @@ const BAR_PREFS = {
             style: {
                 'padding-left': '7px',
                 'padding-right': '7px',
-                'background': 'rgba(228, 228, 228, 0.7)',
                 'color': 'black',
+                'background': 'rgba(228, 228, 228, 0.7)',
                 'border-radius': '25px',
             },
             menuStyle: {
                 'width': '350px',
+                'color': 'black',
             },
         },
         {
@@ -55,10 +62,6 @@ const BAR_PREFS = {
                 'max-width': '650px',
             },
         },
-        // {
-        //     type: 'indicator',
-        //     name: 'indicator-0',
-        // },
     ],
     right: [
         {
@@ -206,6 +209,9 @@ const BAR_PREFS = {
             text: 'Majuscules',
             icon: 'input-keyboard',
             noStatus: true,
+            menuStyle: {
+                'color': 'black',
+            },
         },
         {
             type: 'indicator',
@@ -231,6 +237,18 @@ const BAR_PREFS = {
     ],
 };
 
+for (const key in BAR_PREFS) {
+    const prefs = BAR_PREFS[key];
+
+    for (const subKey in prefs) {
+        const pref = prefs[subKey];
+
+        if (pref.type === 'indicator') {
+            KNOWN_INDICATORS.push(pref.name);
+        }
+    }
+}
+
 
 var BarManager = class {
     constructor() {
@@ -240,13 +258,14 @@ var BarManager = class {
 
         this.resolveDefaultBar();
 
-        this.defaultAddToStatusArea = Main.panel.addToStatusArea;
-        Main.panel.addToStatusArea = (role, indicator, position, box) => {
-            this.defaultAddToStatusArea.bind(Main.panel)(role, indicator, position, box);
+        this.applyProxy(Main.panel, 'addToStatusArea', (proxied, role, indicator, position, box) => {
+            proxied(role, indicator, position, box);
             this.indicatorManager.setIndicator(role, indicator);
 
             this.applyPrefs(BAR_PREFS);
-        };
+        });
+
+        // Main.panel.statusArea.aggregateMenu._indicators.replace_child = (...args) => this.applyPrefs(BAR_PREFS);
 
         this.applyPrefs(BAR_PREFS);
     }
@@ -319,3 +338,5 @@ var BarManager = class {
         }
     }
 };
+
+Object.assign(BarManager.prototype, ProxyMixin);

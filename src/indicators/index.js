@@ -8,6 +8,7 @@ const PopupMenu = imports.ui.popupMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { SignalMixin, ProxyMixin } = Me.imports.src.mixins;
+const Helper = Me.imports.src.helper;
 
 
 var ButtonIndicator = GObject.registerClass(
@@ -73,7 +74,7 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         this.subMenu.show();
     }
 
-    applyPrefs({ text, icon, noStatus=false }) {
+    applyPrefs({ text, icon, style, statusStyle, menuStyle, noStatus=false }) {
         if (text) {
             this.subMenu.label.text = text;
         }
@@ -81,6 +82,18 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         if (icon) {
             this.subMenu.icon.icon_name = icon;
             this.iconIndicator.icon_name = icon;
+        }
+
+        if (style !== undefined) {
+            Helper.mergeStyle(this.subMenu, style);
+        }
+
+        if (statusStyle !== undefined) {
+            Helper.mergeStyle(this.iconIndicator, statusStyle);
+        }
+
+        if (menuStyle !== undefined) {
+            Helper.mergeStyle(this.subMenu.menu.box, menuStyle);
         }
 
         this.noStatus = noStatus;

@@ -83,7 +83,7 @@ var IndicatorHandler = class {
     applyPrefs(prefs) {
         if (this.elements.indicator) {
             if (prefs.style !== undefined) {
-                Helper.mergeStyle(this.elements.indicator.first_child, prefs.style);
+                Helper.mergeStyle(this.elements.indicator.first_child || this.elements.indicator, prefs.style);
             }
 
             if (prefs.menuStyle !== undefined) {
