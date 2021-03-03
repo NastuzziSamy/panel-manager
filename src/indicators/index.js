@@ -97,22 +97,29 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         this.proxied.remove_all_children();
 
         if (children.length === 1 && children[0] instanceof St.BoxLayout) {
-            const subChildren = children[0].get_children().filter(child => child.style_class !== 'popup-menu-arrow');
+            const subChildren = children[0].get_children().filter(elem => elem.style_class !== 'popup-menu-arrow');
+            let child = subChildren[0];
+            let onlyOneChild = subChildren.length === 1;
 
-            if (subChildren[0] instanceof St.Icon) {
+            if (children[0].first_child === children[0].last_child) {
+                child = children[0].first_child;
+                onlyOneChild = true;
+            }
+
+            if (child instanceof St.Icon) {
                 if (!this.subMenu.icon.icon_name) {
-                    this.subMenu.icon.icon_name = subChildren[0].icon_name;
-                    this.iconIndicator.icon_name = subChildren[0].icon_name;
+                    this.subMenu.icon.icon_name = child.icon_name;
+                    this.iconIndicator.icon_name = child.icon_name;
 
-                    subChildren[0].bind_property('icon_name', this.subMenu.icon, 'icon_name', 0);
-                    subChildren[0].bind_property('icon_name', this.iconIndicator, 'icon_name', 0);
+                    child.bind_property('icon_name', this.subMenu.icon, 'icon_name', 0);
+                    child.bind_property('icon_name', this.iconIndicator, 'icon_name', 0);
                 }
 
-                if (subChildren.length === 1) {
+                if (onlyOneChild) {
                     return;
                 }
 
-                subChildren[0].visible = false;
+                child.visible = false;
             }
         }
 
@@ -120,10 +127,20 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
             const child = children[key];
 
             if (child instanceof St.BoxLayout) {
-                const arrowChild = child.get_last_child();
+                const subChildren = child.get_children();
 
-                if (arrowChild.style_class === 'popup-menu-arrow') {
-                    arrowChild.visible = false;
+                for (const subKey in subChildren) {
+                    const subChild = subChildren[subKey];
+
+                    if (subChild instanceof St.Icon) {
+                        if (subChild.style_class === 'popup-menu-arrow') {
+                            subChild.visible = false;
+                        } else {
+                            subChild.icon_size = this.subMenu.icon.width;
+
+                            this.subMenu.icon.bind_property('width', subChild, 'icon_size', 0);
+                        }
+                    }
                 }
             }
 
