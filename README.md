@@ -1,9 +1,9 @@
-# bar-manager
-GNOME bar manager
+# Panel-manager
+GNOME Panel manager
 
 ## Description
 
-This extension allows you to redesign your panel bar however you want.
+This extension allows you to redesign your panel however you want.
 Hide indicators, move them, reorganize them.
 
 ## Example with some extensions installed
@@ -11,5 +11,5 @@ Hide indicators, move them, reorganize them.
 Classic GNOME panel bar:
 ![old](./assets/screenshots/old.png)
 
-Custom bar with Bar Manager:
+Custom panel with Panel Manager:
 ![new](./assets/screenshots/new.png)

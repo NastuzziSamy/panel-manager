@@ -25,11 +25,11 @@ var ButtonIndicator = GObject.registerClass(
 
 var IndicatorToStatus = GObject.registerClass(
 class IndicatorToStatus extends PanelMenu.SystemIndicator {
-    _init(indicator) {
+    _init(name, indicator) {
         super._init();
 
         this.proxied = indicator;
-        this.subMenu = new PopupMenu.PopupSubMenuMenuItem('', true);
+        this.subMenu = new PopupMenu.PopupSubMenuMenuItem(name, true);
         this.iconIndicator = this._addIndicator();
         this.iconIndicator.add_style_class_name('system-status-icon');
         this.isShown = true;

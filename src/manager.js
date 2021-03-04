@@ -15,7 +15,7 @@ const KNOWN_INDICATORS = [
 ];
 
 
-const BAR_PREFS = {
+const PANEL_PREFS = {
     left: [
         {
             type: 'menu',
@@ -239,8 +239,8 @@ const BAR_PREFS = {
     ],
 };
 
-for (const key in BAR_PREFS) {
-    const prefs = BAR_PREFS[key];
+for (const key in PANEL_PREFS) {
+    const prefs = PANEL_PREFS[key];
 
     for (const subKey in prefs) {
         const pref = prefs[subKey];
@@ -252,19 +252,19 @@ for (const key in BAR_PREFS) {
 }
 
 
-var BarManager = class {
+var PanelManager = class {
     constructor() {
         this.indicatorManager = new IndicatorManager;
         this.boxManager = new BoxManager;
-        this.defaultBar = {};
+        this.defaultPanel = {};
 
-        this.resolveDefaultBar();
+        this.resolveDefaultPanel();
 
         this.applyProxy(Main.panel, 'addToStatusArea', (proxied, role, indicator, position, box) => {
             proxied(role, indicator, position, box);
             this.indicatorManager.setIndicator(role, indicator);
 
-            this.applyPrefs(BAR_PREFS);
+            this.applyPrefs(PANEL_PREFS);
         });
 
         this.applyProxy(Main.panel.statusArea.aggregateMenu._indicators, 'replace_child', (proxied, old_child, new_child) => {
@@ -276,26 +276,28 @@ var BarManager = class {
             indicator.addElement(new_child);
             Main.panel.statusArea.aggregateMenu[`_${indicator.name}`] = new_child;
 
-            this.applyPrefs(BAR_PREFS);
+            this.applyPrefs(PANEL_PREFS);
         });
 
-        this.applyPrefs(BAR_PREFS);
+        // Executing it twice resolve some bugs ??.
+        this.applyPrefs(PANEL_PREFS);
+        this.applyPrefs(PANEL_PREFS);
     }
 
     destroy() {
-        this.applyPrefs(this.defaultBar);
+        this.applyPrefs(this.defaultPanel);
 
         this.restoreProxies();
     }
 
-    resolveDefaultBar() {
+    resolveDefaultPanel() {
         const boxes = this.boxManager.getBoxes();
         this.indicatorManager.resolveIndicators(this.boxManager.getMenus(), boxes);
 
         for (const key in boxes) {
             const box = boxes[key];
             const children = box.get_children();
-            this.defaultBar[key] = [];
+            this.defaultPanel[key] = [];
 
             for (const position in children) {
                 const child = children[position];
@@ -304,7 +306,7 @@ var BarManager = class {
                 const indicator = this.indicatorManager.findIndicator(element);
                 if (!indicator) continue;
 
-                this.defaultBar[key][position] = indicator.name;
+                this.defaultPanel[key][position] = indicator.name;
             }
         }
     }
@@ -351,4 +353,4 @@ var BarManager = class {
     }
 };
 
-Object.assign(BarManager.prototype, ProxyMixin);
+Object.assign(PanelManager.prototype, ProxyMixin);

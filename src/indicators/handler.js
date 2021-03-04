@@ -43,7 +43,7 @@ var IndicatorHandler = class {
 
     getStatus() {
         if (!this.elements.status && this.elements.indicator) {
-            this.elements.status = new IndicatorToStatus(this.elements.indicator);
+            this.elements.status = new IndicatorToStatus(this.name, this.elements.indicator);
         }
 
         return this.elements.status;

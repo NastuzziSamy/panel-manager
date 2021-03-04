@@ -1,21 +1,21 @@
 const { Clutter } = imports.gi;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const { BarManager } = Me.imports.src.manager;
+const { PanelManager } = Me.imports.src.manager;
 
 
 var Extension = class {
     enable() {
-        global.managers.bar = new BarManager();
+        global.managers.panel = new PanelManager();
     }
 
     disable() {
         if (!global.managers) return;
 
-        if (global.managers.bar) {
-            global.managers.bar.destroy();
+        if (global.managers.panel) {
+            global.managers.panel.destroy();
         }
 
-        global.managers.bar = undefined;
+        global.managers.panel = undefined;
     }
 };
