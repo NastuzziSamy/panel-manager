@@ -141,6 +141,18 @@ var IndicatorManager = class {
     setIndicator(name, element) {
         if (!this.validElement(element) || this.hasElement(element)) return;
 
+        const matchedApp = name.match(/^appindicator-/);
+
+        if (matchedApp) {
+            const match = name.match(/^appindicator-:[0-9.]+\/org\/ayatana\/NotificationItem\/([^:]+).*?$/);
+
+            if (!match) {
+                [, name] = name.match(/^appindicator[^:]*:([^:]+).*?$/)
+            } else {
+                name = match[1];
+            }
+        }
+
         if (this.hasIndicator(name)) {
             this.getIndicator(name).addElement(element);
 
@@ -150,7 +162,7 @@ var IndicatorManager = class {
         this.indicators[name] = new IndicatorHandler(name);
         this.indicators[name].addElement(element);
 
-        if (name.match(/^appindicator/)) {
+        if (matchedApp) {
             this.addAppIndicator(this.indicators[name]);
         }
     }

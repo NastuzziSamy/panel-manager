@@ -6,11 +6,17 @@ const { PanelManager } = Me.imports.src.manager;
 
 var Extension = class {
     enable() {
+        if (!global.managers) {
+            global.managers = {};
+        }
+
         global.managers.panel = new PanelManager();
     }
 
     disable() {
-        if (!global.managers) return;
+        if (!global.managers) {
+            global.managers = {};
+        }
 
         if (global.managers.panel) {
             global.managers.panel.destroy();

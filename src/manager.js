@@ -11,12 +11,16 @@ const { ProxyMixin } = Me.imports.src.mixins;
 
 
 const KNOWN_INDICATORS = [
-
+    //
 ];
 
 
 const PANEL_PREFS = {
     left: [
+        // {
+        //     type: 'indicator',
+        //     name: 'dwellClick', // marche pas
+        // },
         {
             type: 'menu',
             name: 'menu-1',
@@ -35,10 +39,6 @@ const PANEL_PREFS = {
         {
             type: 'indicator',
             name: 'workspaces',
-        },
-        {
-            type: 'space',
-            space: 25,
         },
         {
             type: 'menu',
@@ -63,10 +63,18 @@ const PANEL_PREFS = {
         },
     ],
     right: [
+        // {
+            // type: 'indicator',
+            // name: 'app-indicators',
+            // order: ['Slack1', 'Guake', 'blueman', 'software_update_available'],
+        // },
         {
             type: 'indicator',
-            name: 'app-indicators',
-            order: ['Slack1', 'discord1'],
+            name: 'Guake',
+        },
+        {
+            type: 'indicator',
+            name: 'Slack1',
         },
         {
             type: 'space',
@@ -78,7 +86,15 @@ const PANEL_PREFS = {
         },
         {
             type: 'indicator',
-            name: 'a11y',
+            name: 'software_update_available',
+        },
+        {
+            type: 'indicator',
+            name: 'blueman',
+        },
+        {
+            type: 'space',
+            space: 25,
         },
         {
             type: 'indicator',
@@ -110,7 +126,7 @@ const PANEL_PREFS = {
             style: {
                 'padding-left': '7px',
                 'padding-right': '7px',
-                'font-size': '14px',
+                'font-size': '15px',
                 'background': 'rgba(228, 228, 228, 0.7)',
                 'color': 'black',
                 'border-radius': '25px',
@@ -163,34 +179,6 @@ const PANEL_PREFS = {
             name: 'printers',
             text: 'Imprimantes',
         },
-    ],
-    'menu-1': [
-        {
-            type: 'separator',
-            text: 'Energie',
-        },
-        {
-            type: 'indicator',
-            name: 'brightness',
-        },
-        {
-            type: 'indicator',
-            name: 'power',
-            style: {
-                'font-size': '16px',
-            },
-        },
-        {
-            type: 'separator',
-        },
-        {
-            type: 'separator',
-            text: 'Volume',
-        },
-        {
-            type: 'indicator',
-            name: 'volume',
-        },
         {
             type: 'separator',
         },
@@ -220,6 +208,52 @@ const PANEL_PREFS = {
             name: 'a11y',
             text: 'Accessibilité',
             noStatus: true,
+        },
+        {
+            type: 'indicator',
+            name: 'systemdManager',
+            text: 'Services',
+            noStatus: true,
+        },
+        {
+            type: 'indicator',
+            name: 'thunderbolt',
+            text: 'Thunderbolt',
+            noStatus: true,
+        },
+        {
+            type: 'indicator',
+            name: 'color-picker@tuberry',
+            text: 'Sélectionner une couleur',
+            noStatus: true,
+        },
+    ],
+    'menu-1': [
+        {
+            type: 'separator',
+            text: 'Energie',
+        },
+        {
+            type: 'indicator',
+            name: 'brightness',
+        },
+        {
+            type: 'indicator',
+            name: 'power',
+            style: {
+                'font-size': '15px',
+            },
+        },
+        {
+            type: 'separator',
+        },
+        {
+            type: 'separator',
+            text: 'Volume',
+        },
+        {
+            type: 'indicator',
+            name: 'volume',
         },
         {
             type: 'separator',

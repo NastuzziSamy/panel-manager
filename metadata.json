@@ -3,6 +3,6 @@
   "description": "Allow the user to customize how he wants the gnome panel...",
   "uuid": "panel-manager@nastuzzisamy.github.com",
   "shell-version": [
-    "3.38"
+    "40"
   ]
 }

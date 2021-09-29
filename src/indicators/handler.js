@@ -1,4 +1,4 @@
-const { St, Meta, GLib } = imports.gi;
+const { St, Meta } = imports.gi;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -98,13 +98,17 @@ var AppIndicatorHandler = class extends IndicatorHandler {
     }
 
     addElement(element) {
-        const [, name] = element.name.match(/^appindicator.*\/(.+)$/)
+        if (this.hasIndicator(element.name)) return;
 
-        this.elements[name] = element;
+        this.elements[element.name] = element;
     }
 
     hasElement(element) {
         return Object.values(this.elements).includes(element);
+    }
+
+    hasIndicator(name) {
+        return Object.keys(this.elements).includes(name);
     }
 
     getIndicator(name) {

@@ -30,8 +30,11 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
 
         this.proxied = indicator;
         this.subMenu = new PopupMenu.PopupSubMenuMenuItem(name, true);
+
         this.iconIndicator = this._addIndicator();
         this.iconIndicator.add_style_class_name('system-status-icon');
+        this.iconIndicator.hide();
+
         this.isShown = true;
         this.noStatus = false;
 
@@ -109,30 +112,42 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         const children = this.proxied.get_children();
         this.proxied.remove_all_children();
 
-        if (children.length === 1 && children[0] instanceof St.BoxLayout) {
-            const subChildren = children[0].get_children().filter(elem => elem.style_class !== 'popup-menu-arrow');
-            let child = subChildren[0];
-            let onlyOneChild = subChildren.length === 1;
+        const connectIcons = (icon) => {
+            if (!this.subMenu.icon.icon_name) {
+                this.subMenu.icon.icon_name = icon.icon_name;
+                this.iconIndicator.icon_name = icon.icon_name;
 
-            if (children[0].first_child === children[0].last_child) {
-                child = children[0].first_child;
-                onlyOneChild = true;
+                icon.bind_property('icon_name', this.subMenu.icon, 'icon_name', 0);
+                icon.bind_property('icon_name', this.iconIndicator, 'icon_name', 0);
             }
 
-            if (child instanceof St.Icon) {
-                if (!this.subMenu.icon.icon_name) {
-                    this.subMenu.icon.icon_name = child.icon_name;
-                    this.iconIndicator.icon_name = child.icon_name;
+            icon.visible = false;
+        };
 
-                    child.bind_property('icon_name', this.subMenu.icon, 'icon_name', 0);
-                    child.bind_property('icon_name', this.iconIndicator, 'icon_name', 0);
+        if (children.length === 1) {
+            if (children[0] instanceof St.BoxLayout) {
+                const subChildren = children[0].get_children().filter(elem => elem.style_class !== 'popup-menu-arrow');
+                let child = subChildren[0];
+                let onlyOneChild = subChildren.length === 1;
+
+                if (children[0].first_child === children[0].last_child) {
+                    child = children[0].first_child;
+                    onlyOneChild = true;
                 }
 
-                if (onlyOneChild) {
-                    return;
-                }
+                if (child instanceof St.Icon) {
+                    connectIcons(child);
 
-                child.visible = false;
+                    if (onlyOneChild) {
+                        child.visible = true;
+
+                        return;
+                    }
+                }
+            }
+
+            else if (children[0] instanceof St.Icon) {
+                return connectIcons(children[0]);
             }
         }
 
@@ -149,7 +164,9 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
                         if (subChild.style_class === 'popup-menu-arrow') {
                             subChild.visible = false;
                         } else {
-                            subChild.icon_size = this.subMenu.icon.width;
+
+                            // subChild.icon_size = this.subMenu.icon.width;
+                            subChild.icon_size = 16;
 
                             this.subMenu.icon.bind_property('width', subChild, 'icon_size', 0);
                         }
