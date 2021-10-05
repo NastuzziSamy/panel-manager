@@ -2,7 +2,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { PanelManager } = Me.imports.src.manager;
 const { Settings } = Me.imports.src.settings;
-const { PANEL_SCHEMA_KEY, SCHEMAS } = Me.imports.src.consts;
+const { PANEL_SCHEMA_KEY, PANEL_PREFS, SCHEMAS } = Me.imports.src.consts;
 const { settings, setSettings } = Me.imports.src.helper;
 
 
@@ -25,6 +25,14 @@ var Extension = class {
         for (const key in settings) {
             Me.settings.follow(PANEL_SCHEMA_KEY, key, (value) => setSettings(key, value));
         }
+
+        Me.settings.follow(PANEL_SCHEMA_KEY, 'panel-prefs', (prefs) => {
+            Me.prefs = JSON.parse(prefs);
+
+            if (global.managers.panel) {
+                global.managers.panel.applyPrefs(Me.prefs);
+            }
+        });
     }
 
     enable() {

@@ -8,7 +8,15 @@
             <summary>Debug panel manager</summary>
             <description>
                 Show debug messages
-        </description>
+            </description>
+        </key>
+
+        <key type="s" name="panel-prefs">
+            <default>""</default>
+            <summary>User panel preferences</summary>
+            <description>
+                List panel indicators configurations
+            </description>
         </key>
 
     </schema>

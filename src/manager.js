@@ -9,7 +9,7 @@ const { IndicatorManager } = Me.imports.src.indicators.manager;
 const { BoxManager } = Me.imports.src.boxes.manager;
 const { ProxyMixin } = Me.imports.src.mixins;
 const { debug } = Me.imports.src.helper;
-const { PANEL_PREFS } = Me.imports.src.consts;
+const { PANEL_SCHEMA_KEY } = Me.imports.src.consts;
 
 
 var PanelManager = class {
@@ -22,13 +22,11 @@ var PanelManager = class {
 
         this.addProxies();
 
-        // Executing it twice resolve some bugs ??.
-        this.applyPrefs(PANEL_PREFS);
-        this.applyPrefs(PANEL_PREFS);
+        this.applyPrefs(Me.prefs);
     }
 
     destroy() {
-        // this.applyPrefs(this.defaultPanel);
+        this.applyPrefs(this.defaultPanel);
 
         this.restoreProxies();
     }
@@ -40,7 +38,7 @@ var PanelManager = class {
 
             debug(role);
 
-            this.applyPrefs(PANEL_PREFS);
+            this.applyPrefs(Me.prefs);
         });
 
         this.applyProxy(Main.panel.statusArea.aggregateMenu._indicators, 'replace_child', (proxied, old_child, new_child) => {
@@ -55,7 +53,7 @@ var PanelManager = class {
             indicator.addElement(new_child);
             Main.panel.statusArea.aggregateMenu[`_${indicator.name}`] = new_child;
 
-            this.applyPrefs(PANEL_PREFS);
+            this.applyPrefs(Me.prefs);
         });
     }
 
