@@ -1,0 +1,190 @@
+{
+    "menu-0": {
+        "type": "menu",
+        "menuAlignement": 0,
+        "style": {
+            "padding-left": "7px",
+            "padding-right": "7px"
+        },
+        "menuStyle": {
+            "width": "350px"
+        },
+        "elements": [
+            "separator-3",
+            "network",
+            "bluetooth",
+            "location",
+            "rfkill",
+            "separator-4",
+            "separator-5",
+            "drive-menu",
+            "gsconnect",
+            "remoteAccess",
+            "printers",
+            "separator-6",
+            "separator-7",
+            "keyboard",
+            "lockkeys",
+            "a11y",
+            "systemdManager",
+            "thunderbolt",
+            "color-picker@tuberry"
+        ]
+    },
+    "menu-1": {
+        "type": "menu",
+        "menuAlignement": 0,
+        "style": {
+            "padding-left": "7px",
+            "padding-right": "7px",
+            "color": "black",
+            "background": "rgba(228, 228, 228, 0.7)",
+            "border-radius": "25px"
+        },
+        "menuStyle": {
+            "width": "350px"
+        },
+        "elements": [
+            "separator-8",
+            "brightness",
+            "power",
+            "separator-9",
+            "separator-10",
+            "volume",
+            "separator-11",
+            "separator-12",
+            "nightLight",
+            "system"
+        ]
+    },
+    "workspaces": {},
+    "appMenu": {
+        "style": {
+            "padding-left": "7px",
+            "padding-right": "7px",
+            "color": "black",
+            "background": "rgba(228, 228, 228, 0.7)",
+            "border-radius": "25px",
+            "max-width": "650px"
+        }
+    },
+    "Guake": {
+        "type": "app-indicator"
+    },
+    "Slack1": {
+        "type": "app-indicator"
+    },
+    "separator-0": {
+        "type": "separator",
+        "width": 25
+    },
+    "/org/gnome/Shell/Extensions/GSConnect/Device/de6fe4af05943228": {},
+    "software_update_available": {},
+    "blueman": {},
+    "separator-1": {
+        "type": "separator",
+        "width": 25
+    },
+    "de.ttll.GnomeScreenshot": {},
+    "clipboardIndicator": {},
+    "separator-2": {
+        "type": "separator",
+        "width": 15
+    },
+    "NotificationCenter": {},
+    "dateMenu": {
+        "style": {
+            "padding-left": "7px",
+            "padding-right": "7px",
+            "font-size": "15px",
+            "background": "rgba(228, 228, 228, 0.7)",
+            "color": "black",
+            "border-radius": "25px"
+        }
+    },
+    "separator-3": {
+        "type": "separator",
+        "text": "Connexions"
+    },
+    "network": {},
+    "bluetooth": {},
+    "location": {},
+    "rfkill": {},
+    "separator-4": {
+        "type": "separator"
+    },
+    "separator-5": {
+        "type": "separator",
+        "text": "Appareils"
+    },
+    "drive-menu": {
+        "text": "Disques connectés"
+    },
+    "gsconnect": {},
+    "remoteAccess": {},
+    "printers": {
+        "text": "Imprimantes"
+    },
+    "separator-6": {
+        "type": "separator"
+    },
+    "separator-7": {
+        "type": "separator",
+        "text": "Outils"
+    },
+    "keyboard": {
+        "text": "Langue",
+        "icon": "format-text-bold",
+        "noStatus": true
+    },
+    "lockkeys": {
+        "text": "Majuscules",
+        "icon": "input-keyboard",
+        "noStatus": true,
+        "optionsStyle": {
+            "color": "black"
+        }
+    },
+    "a11y": {
+        "text": "Accessibilité",
+        "noStatus": true
+    },
+    "systemdManager": {
+        "text": "Services",
+        "noStatus": true
+    },
+    "thunderbolt": {
+        "text": "Thunderbolt",
+        "noStatus": true},
+    "color-picker@tuberry": {
+        "text": "Sélectionner une couleur",
+        "noStatus": true
+    },
+    "separator-8": {
+        "type": "separator",
+        "text": "Energie"
+    },
+    "brightness": {},
+    "power": {
+        "style": {
+            "font-size": "15px"
+        }
+    },
+    "separator-9": {
+        "type": "separator"
+    },
+    "separator-10": {
+        "type": "separator",
+        "text": "Volume"
+    },
+    "volume": {},
+    "separator-11": {
+        "type": "separator"
+    },
+    "separator-12": {
+        "type": "separator",
+        "text": "Paramètres"
+    },
+    "nightLight": {},
+    "system": {}
+}

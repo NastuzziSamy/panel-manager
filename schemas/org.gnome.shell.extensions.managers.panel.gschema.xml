@@ -11,11 +11,27 @@
             </description>
         </key>
 
-        <key type="s" name="panel-prefs">
-            <default>""</default>
-            <summary>User panel preferences</summary>
+        <key type="s" name="panels-configurations">
+            <default>"{}"</default>
+            <summary>Panel configurations</summary>
             <description>
-                List panel indicators configurations
+                List panels and their layouts
+            </description>
+        </key>
+
+        <key type="s" name="layouts-configurations">
+            <default>"{}"</default>
+            <summary>Layout configurations</summary>
+            <description>
+                List layouts and their elements such as menus, indicators, spaces
+            </description>
+        </key>
+
+        <key type="s" name="indicators-configurations">
+            <default>"{}"</default>
+            <summary>Indicator configurations</summary>
+            <description>
+                List indicators with configurations
             </description>
         </key>
 

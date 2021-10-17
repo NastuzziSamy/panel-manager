@@ -5,30 +5,72 @@ const PopupMenu = imports.ui.popupMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
+const { PanelManager } = Me.imports.src.panels.manager;
+const { LayoutManager } = Me.imports.src.layouts.manager;
 const { IndicatorManager } = Me.imports.src.indicators.manager;
-const { BoxManager } = Me.imports.src.boxes.manager;
 const { ProxyMixin } = Me.imports.src.mixins;
-const { debug } = Me.imports.src.helper;
+const { warn, debug } = Me.imports.src.helper;
 const { PANEL_SCHEMA_KEY } = Me.imports.src.consts;
 
 
-var PanelManager = class {
-    manage() {
-        this.indicatorManager = new IndicatorManager();
-        this.boxManager = new BoxManager();
-        this.defaultPanel = {};
+var ExtensionManager = class {
+    constructor() {
+        this.reset();
+    }
 
-        this.resolveDefaultPanel();
+    manage() {
+        this.manageManagers();
+
+        this.trackSettings();
 
         this.addProxies();
-
-        this.applyPrefs(Me.prefs);
     }
 
     destroy() {
-        this.applyPrefs(this.defaultPanel);
-
         this.restoreProxies();
+
+        // Destroy all managers.
+        this.panelManager.destroy();
+        this.layoutManager.destroy();
+        this.indicatorManager.destroy();
+
+        this.panelManager = undefined;
+        this.layoutManager = undefined;
+        this.indicatorManager = undefined;
+    }
+
+    reset() {
+        // List all managers.
+        this.panelManager = new PanelManager();
+        this.layoutManager = new LayoutManager();
+        this.indicatorManager = new IndicatorManager();
+    }
+
+    manageManagers() {
+        this.panelManager.manage();
+        this.layoutManager.manage();
+        this.indicatorManager.manage();
+    }
+
+    trackSettings() {
+        Me.settings.follow(PANEL_SCHEMA_KEY, 'panels-configurations',
+            (config) => this.panelManager.updateConfig(this._parseConfig(config)));
+
+        Me.settings.follow(PANEL_SCHEMA_KEY, 'layouts-configurations',
+            (config) => this.layoutManager.updateConfig(this._parseConfig(config)));
+
+        Me.settings.follow(PANEL_SCHEMA_KEY, 'indicators-configurations',
+            (config) => this.indicatorManager.updateConfig(this._parseConfig(config)));
+    }
+
+    _parseConfig(config) {
+        try {
+            return JSON.parse(config);
+        } catch {
+            warn('Config is not a JSON, got: ' + config);
+        }
+
+        return {};
     }
 
     addProxies() {
@@ -120,4 +162,4 @@ var PanelManager = class {
     }
 };
 
-Object.assign(PanelManager.prototype, ProxyMixin);
+Object.assign(ExtensionManager.prototype, ProxyMixin);

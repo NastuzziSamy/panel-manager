@@ -1,148 +1,83 @@
-const { St, Meta } = imports.gi;
-const Main = imports.ui.main;
-const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const { ButtonIndicator, IndicatorToStatus } = Me.imports.src.indicators.index;
-const Helper = Me.imports.src.helper;
+const { BaseHandler } = Me.imports.src.base;
+const { mergeStyle } = Me.imports.src.helper;
 
 
-var IndicatorHandler = class {
-    constructor(name) {
-        this.name = name;
+var IndicatorHandler = class extends BaseHandler {
+    handle() {
+        const parent = this.element.get_parent();
 
-        this.elements = {
-            indicator: null,
-            status: null,
-            menu: null,
-        };
-    }
-
-    addElement(element) {
-        if (element instanceof PanelMenu.SystemIndicator || element instanceof IndicatorToStatus) {
-            this.elements.status = element;
-        } else if (element instanceof PanelMenu.Button || element instanceof ButtonIndicator || element instanceof St.BoxLayout) {
-            this.elements.indicator = element;
-        }
-    }
-
-    hasElement(element) {
-        if (!element) return false;
-
-        if (this.elements.status && this.elements.status instanceof PanelMenu.SystemIndicator && this.elements.status.menu.box === element) {
-            return true;
+        if (parent) {
+            parent.remove_actor(this.element);
         }
 
-        const toCompare = [
-            this.elements.indicator, this.elements.status,
-            (this.elements.indicator || {}).proxied, (this.elements.status || {}).proxied,
-        ];
-
-        return toCompare.includes(element) || (element.proxied && toCompare.includes(element.proxied));
-    }
-
-    getStatus() {
-        if (!this.elements.status && this.elements.indicator) {
-            this.elements.status = new IndicatorToStatus(this.name, this.elements.indicator);
-        }
-
-        return this.elements.status;
+        // TODO: proxy layout add child.
     }
 
     getIndicator() {
-        // if (!this.elements.indicator && this.elements.status) {
-        //     this.elements.indicator = new StatusToIndicator(this.elements.status);
-        // }
-
-        return this.elements.indicator;
+        return this.getElement();
     }
 
-    applyPrefs(prefs) {
-        if (this.elements.indicator) {
-            if (prefs.style !== undefined) {
-                Helper.mergeStyle(this.elements.indicator.first_child || this.elements.indicator, prefs.style);
-            }
+    prepareForConfig(config) {
+        // TODO: prepare by saving diff configs.
+    }
 
-            if (prefs.menuStyle !== undefined) {
-                Helper.mergeStyle(this.elements.indicator.menu.box, prefs.menuStyle);
-            }
+    updateConfig(config) {
+        super.updateConfig(config);
+
+        // TODO: add under for menus etc..
+
+        if (config.style !== undefined) {
+            mergeStyle(this.element.first_child || this.element, config.style);
         }
 
-        if (this.elements.status instanceof IndicatorToStatus) {
-            this.elements.status.applyPrefs(prefs);
-        } else if (this.elements.status) {
-            if (prefs.style !== undefined) {
-                Helper.mergeStyle(this.elements.status, prefs.style);
-            }
-
-            if (prefs.menuStyle !== undefined) {
-                Helper.mergeStyle(this.elements.status.menu, prefs.menuStyle);
-            }
-
-            if (prefs.optionsStyle !== undefined) {
-                const children = this.elements.status.menu.get_children();
-
-                for (const key in children) {
-                    Helper.mergeStyle(children[key].menu.box, prefs.optionsStyle);
-                }
-            }
+        if (config.menuStyle !== undefined) {
+            mergeStyle(this.element.menu.box, config.menuStyle);
         }
+
+        // if (this.elements.status instanceof IndicatorToStatus) {
+        //     this.elements.status.applyPrefs(prefs);
+        // } else if (this.elements.status) {
+        //     if (prefs.style !== undefined) {
+        //         mergeStyle(this.elements.status, prefs.style);
+        //     }
+
+        //     if (prefs.menuStyle !== undefined) {
+        //         mergeStyle(this.elements.status.menu, prefs.menuStyle);
+        //     }
+
+        //     if (prefs.optionsStyle !== undefined) {
+        //         const children = this.elements.status.menu.get_children();
+
+        //         for (const key in children) {
+        //             mergeStyle(children[key].menu.box, prefs.optionsStyle);
+        //         }
+        //     }
+        // }
+
+        // const { indicatorManager } = global.managers.panel;
+        // const { elements } = config;
+
+        // for (const key in elements) {
+        //     const name = elements[key];
+        //     const indicatorHandler = indicatorManager.getHandler(name);
+        //     if (! indicatorHandler) continue;
+
+        //     indicatorHandler.addToHandler(this, details);
+        // }
+    }
+
+    addToHandler(handler) {
+        handler.element.add_child(this.element);
     }
 };
 
+
 var AppIndicatorHandler = class extends IndicatorHandler {
-    constructor(name) {
-        super(name);
-
-        this.elements = {};
-    }
-
     addElement(element) {
-        if (this.hasIndicator(element.name)) return;
+        // TODO: Add to app indicators.
 
-        this.elements[element.name] = element;
-    }
-
-    hasElement(element) {
-        return Object.values(this.elements).includes(element);
-    }
-
-    hasIndicator(name) {
-        return Object.keys(this.elements).includes(name);
-    }
-
-    getIndicator(name) {
-        if (!name) return null;
-
-        return this.elements[name].getIndicator();
-    }
-
-    getStatus(name) {
-        if (!name) return null;
-
-        return this.elements[name].getStatus();
-    }
-
-    applyPrefs(prefs) {
-        for (const key in this.elements) {
-            this.elements[key].applyPrefs(prefs);
-        }
-    }
-
-    insertIntoBox(box, position, prefs) {
-        this.applyPrefs(prefs);
-
-        const keys = prefs.order || Object.keys(this.elements);
-        let added = 0;
-
-        for (const key in keys) {
-            const element = this.elements[keys[key]];
-
-            if (element) {
-                added += element.insertIntoBox(box, position + added, prefs);
-            }
-        }
-
-        return added;
+        super.addElement(element);
     }
 }
