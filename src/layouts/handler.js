@@ -18,14 +18,11 @@ var LayoutHandler = class extends BaseHandler {
     }
 
     getLayout() {
-        return this.getElement();
+        return this.element;
     }
 
-    updateConfig(config) {
-        super.updateConfig(config);
-
+    updateConfig({ elements }) {
         const { indicatorManager } = global.managers.panel;
-        const { elements } = config;
 
         for (const key in elements) {
             const name = elements[key];
@@ -37,7 +34,14 @@ var LayoutHandler = class extends BaseHandler {
     }
 
     addHandler(handler) {
-        this.element.add_child(handler.element);
+        this.getElement().add_child(handler.getElement());
+
+        const menu = handler.getMenu();
+        const parent = this.getElement().get_parent();
+
+        if (menu && parent && parent.menuManager) {
+            parent.menuManager.addMenu(menu);
+        }
     }
 };
 

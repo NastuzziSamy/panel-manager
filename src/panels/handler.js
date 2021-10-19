@@ -22,14 +22,11 @@ var PanelHandler = class extends BaseHandler {
     }
 
     getPanel() {
-        return this.getElement();
+        return this.element;
     }
 
-    updateConfig(config) {
-        super.updateConfig(config);
-
+    updateConfig({ elements }) {
         const { layoutManager } = global.managers.panel;
-        const { elements } = config;
 
         for (const key in elements) {
             const name = elements[key];
@@ -65,13 +62,13 @@ var MainPanelHandler = class extends PanelHandler {
     }
 
     setProxies() {
-        this.applyProxy(this.getPanel(), 'addToStatusArea', (proxied, role, indicator, position, box) => {
+        this.applyProxy(this.getElement(), 'addToStatusArea', (proxied, role, indicator, position, box) => {
             proxied(role, indicator, position, box);
 
             global.managers.panel.indicatorManager.addElement(role, indicator);
         });
 
-        this.applyProxy(this.getPanel().statusArea.aggregateMenu._indicators, 'replace_child', (proxied, old_child, new_child) => {
+        this.applyProxy(this.getElement().statusArea.aggregateMenu._indicators, 'replace_child', (proxied, old_child, new_child) => {
             proxied(old_child, new_child);
 
             // TODO: Find and replace.
@@ -80,7 +77,7 @@ var MainPanelHandler = class extends PanelHandler {
             // if (!indicator) return;
 
             // indicator.addElement(new_child);
-            // this.getPanel().statusArea.aggregateMenu[`_${indicator.name}`] = new_child;
+            // this.getElement().statusArea.aggregateMenu[`_${indicator.name}`] = new_child;
 
             // this.applyPrefs(Me.prefs);
         });
@@ -91,6 +88,10 @@ var MainPanelHandler = class extends PanelHandler {
             global.managers.panel.indicatorManager.addElement(key, Main.panel.statusArea[key]);
         }
     }
-}
+
+    prepareForConfig(config) {
+        // Nothing.
+    }
+};
 
 Object.assign(MainPanelHandler.prototype, ProxyMixin);

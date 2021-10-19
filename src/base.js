@@ -1,13 +1,15 @@
+const { St } = imports.gi;
+
+
 var BaseHandler = class {
     constructor(name) {
         this.name = name;
 
-        this.config = {};
         this.element = null;
     }
 
     handle() {
-        throw 'handle not defined';
+        throw new Error('handle not defined');
     }
 
     addElement(element) {
@@ -25,19 +27,29 @@ var BaseHandler = class {
     }
 
     prepareForConfig(config) {
-        const children = this.element.get_children();
+        const element = this.getElement();
+        const parent = element.get_parent();
 
-        for (const key in children) {
-            this.element.remove_child(children[key]);
+        if (parent) {
+            if (parent instanceof St.Bin && parent.get_parent()) {
+                parent.get_parent().remove_child(parent);
+            }
+
+            parent.remove_child(element);
         }
+        // const children = this.element.get_children();
+
+        // for (const key in children) {
+        //     this.element.remove_child(children[key]);
+        // }
     }
 
     updateConfig(config) {
-        this.config = config;
+        throw new Error('updateConfig not defined');
     }
 
     addHandler(handler) {
-        throw 'addHandler not defined';
+        throw new Error('addHandler not defined');
     }
 };
 
@@ -48,7 +60,7 @@ var BaseManager = class {
     }
 
     manage() {
-        throw 'manage not defined';
+        throw new Error('manage not defined');
     }
 
     destroy() {
@@ -57,7 +69,6 @@ var BaseManager = class {
 
     reset() {
         this.handlers = {}
-        this.config = {};
     }
 
     hasName(name) {
@@ -65,7 +76,7 @@ var BaseManager = class {
     }
 
     validElement(element) {
-        throw 'validElement not defined';
+        throw new Error('validElement not defined');
     }
 
     hasElement(element) {
@@ -86,7 +97,7 @@ var BaseManager = class {
         }
 
         element = this.resolveElement(element);
-        if (! element || this.hasElement(element)) return false;
+        if (! element || this.hasElement(element) || ! this.validElement(element)) return false;
 
         name = this.checkName(name || this.resolveName(element));
 
@@ -131,7 +142,7 @@ var BaseManager = class {
     }
 
     resolveElement(element) {
-        throw 'resolveElement not defined';
+        throw new Error('resolveElement not defined');
     }
 
     validHandler(handler) {
@@ -162,7 +173,7 @@ var BaseManager = class {
         this.handlers[handler.name] = handler;
         handler.handle();
 
-        this.updateConfig(this.config);
+        global.managers.panel.update();
     }
 
     getHandler(name) {
@@ -175,15 +186,11 @@ var BaseManager = class {
 
     prepareForConfig(config) {
         for (const key in this.handlers) {
-            this.handlers[key].prepareForConfig(config[key] || {});
+            this.getHandler(key).prepareForConfig(config[key] || {});
         }
     }
 
     updateConfig(config) {
-        this.prepareForConfig(config);
-
-        this.config = config;
-
         for (const key in config) {
             const handler = this.getHandler(key);
 

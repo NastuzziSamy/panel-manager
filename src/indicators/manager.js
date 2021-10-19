@@ -1,16 +1,19 @@
 const { St } = imports.gi;
 const Main = imports.ui.main;
+const { AggregateMenu } = imports.ui.panel;
 const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
-const { AppIndicatorHandler, IndicatorHandler } = Me.imports.src.indicators.handler;
+const { BaseIndicatorHandler, AppIndicatorHandler, IndicatorHandler, SpaceIndicatorHandler, SeparatorIndicatorHandler, MenuIndicatorHandler } = Me.imports.src.indicators.handler;
+const { MenuIndicator, SeparatorIndicator, SpaceIndicator, ButtonIndicator, ToStatusIndicator } = Me.imports.src.indicators.index;
 const { BaseManager } = Me.imports.src.base;
-const { INDICATOR_NAME, APP_INDICATOR_NAME } = Me.imports.src.consts;
+const { INDICATOR_NAME, APP_INDICATOR_NAME, MENU_INDICATOR_NAME, SPACE_INDICATOR_NAME, SEPARATOR_INDICATOR_NAME } = Me.imports.src.consts;
+const { debug, warn } = Me.imports.src.helper;
 
 
 var IndicatorManager = class extends BaseManager {
     _DEFAULT_NAME = INDICATOR_NAME
-    _HANDLER_CLASS = IndicatorHandler
+    _HANDLER_CLASS = BaseIndicatorHandler
 
     manage() {
         const children = Main.panel.get_children();
@@ -25,7 +28,14 @@ var IndicatorManager = class extends BaseManager {
     }
 
     validElement(element) {
-        return (element instanceof PanelMenu.Button) || (element instanceof St.Bin);
+        return (element instanceof PanelMenu.Button)
+            || (element instanceof PanelMenu.SystemIndicator)
+            || (element instanceof St.Bin)
+            || (element instanceof ButtonIndicator)
+            || (element instanceof SpaceIndicator)
+            || (element instanceof SeparatorIndicator)
+            || (element instanceof MenuIndicator)
+            || (element instanceof ToStatusIndicator);
     }
 
     resolveElement(element) {
@@ -98,6 +108,45 @@ var IndicatorManager = class extends BaseManager {
             return AppIndicatorHandler;
         }
 
-        return super.resolveHandler(element);
+        if (element instanceof SpaceIndicator) {
+            return SpaceIndicatorHandler;
+        }
+
+        if (element instanceof SeparatorIndicator) {
+            return SeparatorIndicatorHandler;
+        }
+
+        if (element instanceof MenuIndicator || (element instanceof AggregateMenu)) {
+            return MenuIndicatorHandler;
+        }
+
+        return IndicatorHandler;
+    }
+
+    prepareForConfig(config) {
+        for (const key in config) {
+            const handler = this.getHandler(key);
+
+            if (! handler && config[key].type) {
+                switch (config[key].type) {
+                    case MENU_INDICATOR_NAME:
+                        this.setElement(key, new MenuIndicator(key));
+                        break;
+
+                    case SPACE_INDICATOR_NAME:
+                        this.setElement(key, new SpaceIndicator());
+                        break;
+
+                    case SEPARATOR_INDICATOR_NAME:
+                        this.setElement(key, new SeparatorIndicator(key));
+                        break;
+
+                    default:
+                        warn(`Type ${config[key].type} not recognized`);
+                }
+            }
+        }
+
+        super.prepareForConfig(config);
     }
 };

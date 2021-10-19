@@ -4,6 +4,7 @@ const BoxPointer = imports.ui.boxpointer;
 const SystemActions = imports.misc.systemActions;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
+const Panel = imports.ui.panel;
 const PopupMenu = imports.ui.popupMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
@@ -23,8 +24,46 @@ var ButtonIndicator = GObject.registerClass(
 );
 
 
-var IndicatorToStatus = GObject.registerClass(
-class IndicatorToStatus extends PanelMenu.SystemIndicator {
+var SpaceIndicator = GObject.registerClass(
+    class SpaceIndicator extends St.BoxLayout {
+    }
+);
+
+
+var SeparatorIndicator = GObject.registerClass(
+    class SeparatorIndicator extends PopupMenu.PopupSeparatorMenuItem {
+        constructor(name) {
+            super(name);
+
+            this.setText(' ');
+        }
+
+        setText(text) {
+            this.label.text = text;
+        }
+    }
+);
+
+
+var MenuIndicator = GObject.registerClass(
+    class MenuIndicator extends PanelMenu.Button {
+        _init(name) {
+            super._init(0.0, name, false);
+            this.menu.actor.add_style_class_name('aggregate-menu');
+            this.menu.actor.add_style_class_name(name);
+
+            let menuLayout = new Panel.AggregateLayout();
+            this.menu.box.set_layout_manager(menuLayout);
+
+            this._indicators = new St.BoxLayout({ style_class: 'panel-status-indicators-box' });
+            this.add_child(this._indicators);
+        }
+    }
+);
+
+
+var ToStatusIndicator = GObject.registerClass(
+class ToStatusIndicator extends PanelMenu.SystemIndicator {
     _init(name, indicator) {
         super._init();
 
@@ -39,7 +78,7 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         this.noStatus = false;
 
         this.connectSignals();
-        this.insertPanelLayout();
+        this.prepareForLayout();
         this.cloneMenuBox();
         this.proxyMenu();
 
@@ -77,29 +116,23 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         this.subMenu.show();
     }
 
-    applyPrefs({ text, icon, style, menuStyle, optionsStyle, noStatus=false }) {
-        if (text) {
-            this.subMenu.label.text = text;
+    setText(text) {
+        this.subMenu.label.text = text;
+    }
+
+    setIcon(icon) {
+        if (! icon && this._defaultIconChild) {
+            icon = this._defaultIconChild.icon_name;
         }
 
-        if (icon) {
-            this.subMenu.icon.icon_name = icon;
-            this.iconIndicator.icon_name = icon;
-        }
+        if (! icon) return;
 
-        if (style !== undefined) {
-            Helper.mergeStyle(this.iconIndicator, style);
-        }
+        this.subMenu.icon.icon_name = icon;
+        this.iconIndicator.icon_name = icon;
+    }
 
-        if (menuStyle !== undefined) {
-            Helper.mergeStyle(this.subMenu, menuStyle);
-        }
-
-        if (optionsStyle !== undefined) {
-            Helper.mergeStyle(this.subMenu.menu.box, optionsStyle);
-        }
-
-        this.noStatus = noStatus;
+    hideStatus(hide) {
+        this.noStatus = hide;
 
         if (this.noStatus) {
             this.iconIndicator.hide();
@@ -108,14 +141,15 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
         }
     }
 
-    insertPanelLayout() {
+    prepareForLayout() {
         const children = this.proxied.get_children();
         this.proxied.remove_all_children();
 
         const connectIcons = (icon) => {
+            this._defaultIconChild;
+
             if (!this.subMenu.icon.icon_name) {
-                this.subMenu.icon.icon_name = icon.icon_name;
-                this.iconIndicator.icon_name = icon.icon_name;
+                this.setIcon(icon.icon_name);
 
                 icon.bind_property('icon_name', this.subMenu.icon, 'icon_name', 0);
                 icon.bind_property('icon_name', this.iconIndicator, 'icon_name', 0);
@@ -226,4 +260,4 @@ class IndicatorToStatus extends PanelMenu.SystemIndicator {
     }
 });
 
-Object.assign(IndicatorToStatus.prototype, SignalMixin, ProxyMixin);
+Object.assign(ToStatusIndicator.prototype, SignalMixin, ProxyMixin);

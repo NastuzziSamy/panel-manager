@@ -48,4 +48,21 @@ var PanelManager = class extends BaseManager {
 
         return super.resolveHandler(element);
     }
+
+    updateConfig(config) {
+        for (const key in config) {
+            const handler = this.getHandler(key);
+            if (! handler) continue;
+
+            // Main.layoutManager.addChrome(handler.getElement(), {
+            //     affectsStruts: true,
+            //     trackFullscreen: true,
+            // });
+
+            // Main.uiGroup.add_child(handler.getElement());
+            // Main.ctrlAltTabManager.addGroup(this, _('Window List'), 'start-here-symbolic');
+        }
+
+        super.updateConfig(config);
+    }
 };
